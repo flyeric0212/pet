@@ -4,3 +4,7 @@
  * @date   2017/9/24 19:20 
  */
 package pet
+
+const (
+    SERVERNAME = "pet"
+)
