@@ -11,21 +11,27 @@ import (
     "github.com/chanxuehong/wechat.v2/mp/menu"
     "github.com/chanxuehong/wechat.v2/mp/message/callback/response"
     "third/gin"
+    "pet/utils"
 )
 
 const (
-    wxAppId     = "appid"
-    wxAppSecret = "appsecret"
+    //wxAppId     = "appid"
+    //wxAppSecret = "appsecret"
+    //wxOriId         = "oriid"
 
-    wxOriId         = "oriid"
     wxToken         = "12345678shanghaipet"
     wxEncodedAESKey = "mzTODOLGqD2aVlw53HEOMc6qMYMG4UqXst0FxHzRr2z"
 )
 
 var (
     // 下面两个变量不一定非要作为全局变量, 根据自己的场景来选择.
+
     msgHandler core.Handler
     msgServer  *core.Server
+
+    wxAppId         = utils.Config.External["AppId"]
+    wxAppSecret     = utils.Config.External["AppSecret"]
+    wxOriId         = utils.Config.External["OriId"]
 )
 
 func init() {
