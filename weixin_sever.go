@@ -28,20 +28,20 @@ var (
 
     msgHandler core.Handler
     msgServer  *core.Server
-
-    wxAppId         = utils.Config.External["AppId"]
-    wxAppSecret     = utils.Config.External["AppSecret"]
-    wxOriId         = utils.Config.External["OriId"]
 )
 
-func init() {
+func InitWeixinServer() {
     mux := core.NewServeMux()
     mux.DefaultMsgHandleFunc(defaultMsgHandler)
     mux.DefaultEventHandleFunc(defaultEventHandler)
     mux.MsgHandleFunc(request.MsgTypeText, textMsgHandler)
     mux.EventHandleFunc(menu.EventTypeClick, menuClickEventHandler)
-
     msgHandler = mux
+
+
+    var wxAppId     = utils.Config.External["AppId"]
+    //var wxAppSecret = "appsecret"
+    var wxOriId         = utils.Config.External["OriId"]
     msgServer = core.NewServer(wxOriId, wxAppId, wxToken, wxEncodedAESKey, msgHandler, nil)
 }
 

@@ -57,5 +57,9 @@ func main() {
         return
     }
 
+    // init weixin server
+    InitWeixinServer()
+
+    // start http server
     StartHttpServer()
 }

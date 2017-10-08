@@ -152,7 +152,7 @@ func InitConfigFileEtcd(SERVERNAME, config_file string, config *Configure) error
         Config = config
         CommonConfig = config
     }
-    fmt.Println("config :", *Config, time.Now())
+    fmt.Println("config:", *Config, time.Now())
     return nil
 }
 
