@@ -14,14 +14,15 @@ import (
     "sync/atomic"
     "strconv"
     "math/rand"
-    "blast/common/util"
 )
 
 func StartHttpServer() {
     router := gin.Default()
     router.Use(GinSetTraceInfo())
-    router.Use(util.GinCrossDomain())
+    //router.Use(util.GinCrossDomain())
 
+    router.GET("/wx_callback", WxCallbackHandler)
+    router.POST("/wx_callback", WxCallbackHandler)
 
     router.Run(utils.Config.Listen)
 }

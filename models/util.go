@@ -7,9 +7,8 @@ package models
 
 import (
     "third/gorm"
-
-    "blast/common/util"
     "fmt"
+    "pet/utils"
 )
 
 var PET_DB *gorm.DB
@@ -17,24 +16,24 @@ var PET_DB *gorm.DB
 func InitAllDB() error {
     var err error
 
-    PET_DB, err = InitPetDb(util.CommonConfig)
+    PET_DB, err = InitPetDb(utils.CommonConfig)
     if nil != err {
-        util.Logger.Warning("open pet db error")
+        utils.Logger.Warning("open pet db error")
         return err
     }
 
     return nil
 }
 
-func InitPetDb(config *util.Configure) (*gorm.DB, error) {
+func InitPetDb(config *utils.Configure) (*gorm.DB, error) {
     var err error
     PetDbSetting, ok := config.MysqlSetting["PetDbSetting"]
     if !ok {
         return nil, fmt.Errorf("can't find pet mysql settings")
     }
-    PET_DB, err = util.InitGormDbPool(&PetDbSetting)
+    PET_DB, err = utils.InitGormDbPool(&PetDbSetting)
     if err != nil {
-        util.Logger.Warning("open pet DB error")
+        utils.Logger.Warning("open pet DB error")
         return nil, err
     }
     return PET_DB, nil

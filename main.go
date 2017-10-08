@@ -12,6 +12,7 @@ import (
     "fmt"
     "pet/utils"
     "pet/models"
+    _ "third/go-sql-driver/mysql"
 )
 
 const (
@@ -32,11 +33,10 @@ func init() {
 }
 
 func main() {
-    //set runtime variable
     runtime.GOMAXPROCS(runtime.NumCPU())
-    //get flag
     flag.Parse()
 
+    g_conf_file = "config.json"
     err := utils.InitConfigFileEtcd(SERVERNAME, g_conf_file, &g_config)
     if err != nil {
         fmt.Printf("init config failed, err: %v \n", err)

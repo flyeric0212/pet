@@ -20,7 +20,6 @@ type MysqlConfig struct {
 }
 
 var ServerName string
-//var ConsulAddr string
 var Env string
 
 func IsOnline() bool {
@@ -133,7 +132,7 @@ type Configure struct {
 var Config *Configure
 var CommonConfig *Configure
 var g_config_file_last_modify_time time.Time
-var g_local_conf_file string
+//var g_local_conf_file string
 var conf_dir = "/var/config/"
 
 func InitConfigFileEtcd(SERVERNAME, config_file string, config *Configure) error {
@@ -154,13 +153,12 @@ func InitConfigFileEtcd(SERVERNAME, config_file string, config *Configure) error
         CommonConfig = config
     }
     fmt.Println("config :", *Config, time.Now())
-    fmt.Println("common_config: ", *CommonConfig, time.Now())
     return nil
 }
 
 func InitConfigFileWithoutEnv(filename string, config *Configure) error {
-
-    fmt.Println("filename", filename)
+    filename = conf_dir + filename
+    fmt.Println("config file name:", filename)
     fi, err := os.Stat(filename)
     if err != nil {
         fmt.Println("ReadFile: ", err.Error())
@@ -183,8 +181,7 @@ func InitConfigFileWithoutEnv(filename string, config *Configure) error {
         err = NewInternalError(DecodeErrCode, err)
         return err
     }
-    fmt.Println("conifg: ", *config)
-    g_local_conf_file = filename
+    //g_local_conf_file = filename
     return nil
 }
 
@@ -228,7 +225,7 @@ func InitConfigFile(filename string, config *Configure) error {
         return err
     }
     fmt.Println("conifg :", *config)
-    g_local_conf_file = filename
+    //g_local_conf_file = filename
     Config = config
     return nil
 }
