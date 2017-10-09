@@ -12,8 +12,6 @@ import (
     "github.com/chanxuehong/wechat.v2/mp/message/callback/response"
     "third/gin"
     "pet/utils"
-    "fmt"
-    "github.com/chanxuehong/wechat.v2/mp/base"
 )
 
 const (
