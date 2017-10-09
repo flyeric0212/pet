@@ -38,7 +38,6 @@ func InitWeixinServer() {
     mux.EventHandleFunc(menu.EventTypeClick, menuClickEventHandler)
     msgHandler = mux
 
-
     var wxAppId     = utils.Config.External["AppId"]
     //var wxAppSecret = "appsecret"
     var wxOriId         = utils.Config.External["OriId"]
