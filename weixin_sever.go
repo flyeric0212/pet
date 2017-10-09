@@ -12,6 +12,8 @@ import (
     "github.com/chanxuehong/wechat.v2/mp/message/callback/response"
     "third/gin"
     "pet/utils"
+    "fmt"
+    "github.com/chanxuehong/wechat.v2/mp/base"
 )
 
 const (
@@ -48,6 +50,8 @@ func InitWeixinServer() {
     msgServer           = core.NewServer(wxOriId, wxAppId, wxToken, wxEncodedAESKey, msgHandler, nil)
     accessTokenServer   = core.NewDefaultAccessTokenServer(wxAppId, wxAppSecret, nil)
     wechatClient        = core.NewClient(accessTokenServer, nil)
+
+    fmt.Println(base.GetCallbackIP(wechatClient))
 }
 
 func textMsgHandler(ctx *core.Context) {
