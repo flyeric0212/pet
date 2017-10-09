@@ -15,9 +15,9 @@ import (
 )
 
 const (
-    //wxAppId     = "appid"
-    //wxAppSecret = "appsecret"
-    //wxOriId         = "oriid"
+    //wxAppId       = "appid"
+    //wxAppSecret   = "appsecret"
+    //wxOriId       = "oriid"
 
     wxToken         = "12345678shanghaipet"
     wxEncodedAESKey = "mzTODOLGqD2aVlw53HEOMc6qMYMG4UqXst0FxHzRr2z"
@@ -28,6 +28,9 @@ var (
 
     msgHandler core.Handler
     msgServer  *core.Server
+
+    accessTokenServer core.AccessTokenServer
+    wechatClient      *core.Client
 )
 
 func InitWeixinServer() {
@@ -38,10 +41,13 @@ func InitWeixinServer() {
     mux.EventHandleFunc(menu.EventTypeClick, menuClickEventHandler)
     msgHandler = mux
 
-    var wxAppId     = utils.Config.External["AppId"]
-    //var wxAppSecret = "appsecret"
+    var wxAppId         = utils.Config.External["AppId"]
+    var wxAppSecret     = utils.Config.External["AppSecret"]
     var wxOriId         = utils.Config.External["OriId"]
-    msgServer = core.NewServer(wxOriId, wxAppId, wxToken, wxEncodedAESKey, msgHandler, nil)
+
+    msgServer           = core.NewServer(wxOriId, wxAppId, wxToken, wxEncodedAESKey, msgHandler, nil)
+    accessTokenServer   = core.NewDefaultAccessTokenServer(wxAppId, wxAppSecret, nil)
+    wechatClient        = core.NewClient(accessTokenServer, nil)
 }
 
 func textMsgHandler(ctx *core.Context) {
@@ -76,5 +82,7 @@ func defaultEventHandler(ctx *core.Context) {
 //  1. 不同的 web 框架有不同的实现
 //  2. 一般一个 handler 处理一个公众号的回调请求(当然也可以处理多个, 这里我只处理一个)
 func WxCallbackHandler(c *gin.Context) {
+    query := c.Request.URL.Query()
+    g_logger.Info("query: %+v", query)
     msgServer.ServeHTTP(c.Writer, c.Request, nil)
 }
