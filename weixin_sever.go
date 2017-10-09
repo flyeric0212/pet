@@ -35,9 +35,13 @@ var (
 
 func InitWeixinServer() {
     mux := core.NewServeMux()
+    // 默认处理
     mux.DefaultMsgHandleFunc(defaultMsgHandler)
     mux.DefaultEventHandleFunc(defaultEventHandler)
+
+    // 处理文本消息
     mux.MsgHandleFunc(request.MsgTypeText, textMsgHandler)
+    // 处理菜单点击
     mux.EventHandleFunc(menu.EventTypeClick, menuClickEventHandler)
     msgHandler = mux
 
@@ -50,6 +54,17 @@ func InitWeixinServer() {
     wechatClient        = core.NewClient(accessTokenServer, nil)
 }
 
+func defaultMsgHandler(ctx *core.Context) {
+    g_logger.Info("收到消息:\n%s\n", ctx.MsgPlaintext)
+    ctx.NoneResponse()
+}
+
+func defaultEventHandler(ctx *core.Context) {
+    g_logger.Info("收到事件:\n%s\n", ctx.MsgPlaintext)
+    ctx.NoneResponse()
+}
+
+// 文本消息处理
 func textMsgHandler(ctx *core.Context) {
     g_logger.Info("收到文本消息:\n%s\n", ctx.MsgPlaintext)
 
@@ -59,11 +74,7 @@ func textMsgHandler(ctx *core.Context) {
     //ctx.AESResponse(resp, 0, "", nil) // aes密文回复
 }
 
-func defaultMsgHandler(ctx *core.Context) {
-    g_logger.Info("收到消息:\n%s\n", ctx.MsgPlaintext)
-    ctx.NoneResponse()
-}
-
+//
 func menuClickEventHandler(ctx *core.Context) {
     g_logger.Info("收到菜单 click 事件:\n%s\n", ctx.MsgPlaintext)
 
@@ -73,16 +84,13 @@ func menuClickEventHandler(ctx *core.Context) {
     //ctx.AESResponse(resp, 0, "", nil) // aes密文回复
 }
 
-func defaultEventHandler(ctx *core.Context) {
-    g_logger.Info("收到事件:\n%s\n", ctx.MsgPlaintext)
-    ctx.NoneResponse()
-}
+
 
 // wxCallbackHandler 是处理回调请求的 http handler.
 //  1. 不同的 web 框架有不同的实现
 //  2. 一般一个 handler 处理一个公众号的回调请求(当然也可以处理多个, 这里我只处理一个)
 func WxCallbackHandler(c *gin.Context) {
     query := c.Request.URL.Query()
-    g_logger.Info("query: %+v", query)
+    g_logger.Info("query: %+v \n", query)
     msgServer.ServeHTTP(c.Writer, c.Request, nil)
 }
