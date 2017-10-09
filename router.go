@@ -25,7 +25,7 @@ func StartHttpServer() {
     router.POST("/wx_callback", WxCallbackHandler)
 
     router.Run(utils.Config.Listen)
-    //router.Run(":8080")
+    //router.Run(":80")
 }
 
 
