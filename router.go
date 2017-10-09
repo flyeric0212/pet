@@ -7,7 +7,7 @@ package main
 
 import (
     "third/gin"
-    //"pet/utils"
+    "pet/utils"
     "os"
     "time"
     "third/go-local"
@@ -24,8 +24,8 @@ func StartHttpServer() {
     router.GET("/wx_callback", WxCallbackHandler)
     router.POST("/wx_callback", WxCallbackHandler)
 
-    //router.Run(utils.Config.Listen)
-    router.Run(":8080")
+    router.Run(utils.Config.Listen)
+    //router.Run(":8080")
 }
 
 
