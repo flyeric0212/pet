@@ -102,3 +102,25 @@ func GetBetweenStr(str, start, end string) string {
     str = string([]byte(str)[:m])
     return str
 }
+
+//Be careful to use, from,to must be pointer
+func DumpStruct(to interface{}, from interface{}) {
+    fromv := reflect.ValueOf(from)
+    tov := reflect.ValueOf(to)
+    if fromv.Kind() != reflect.Ptr || tov.Kind() != reflect.Ptr {
+        return
+    }
+
+    from_val := reflect.Indirect(fromv)
+    to_val := reflect.Indirect(tov)
+
+    for i := 0; i < from_val.Type().NumField(); i++ {
+        fdi_from_val := from_val.Field(i)
+        fd_name := from_val.Type().Field(i).Name
+        fdi_to_val := to_val.FieldByName(fd_name)
+
+        if fdi_to_val.IsValid() && fdi_from_val.Type() == fdi_to_val.Type() {
+            fdi_to_val.Set(fdi_from_val)
+        }
+    }
+}

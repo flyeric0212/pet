@@ -12,7 +12,7 @@ import (
 
 // 用户信息表
 type UserProfile struct {
-    Id              int64           `gorm:"primary_key"; sql:"AUTO_INCREMENT"`
+    UserId          int64           `gorm:"primary_key"; sql:"AUTO_INCREMENT"`
     Name            string          `sql:"type:varchar(128)"`
     Gender          int             `sql:"type:smallint(6)"`    // 性别，0: 无性别 1: 男 2: 女
     Phone           string          `sql:"type:varchar(64)"`
@@ -32,8 +32,9 @@ func (user_profile *UserProfile) Create(id *int64) error {
     err := PET_DB.Table(user_profile.TableName()).Create(user_profile).Error
     if nil != err {
         err = utils.NewInternalError(utils.DbErrCode, err)
-        utils.Logger.Error("create user_profile error: %v", err)
+        utils.Logger.Error("create user profile error: %v", err)
         return err
     }
+    id = &user_profile.UserId
     return nil
 }
