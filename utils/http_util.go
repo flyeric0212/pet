@@ -1,15 +1,12 @@
 /**
  * @author liangbo
  * @email  liangbogopher87@gmail.com
- * @date   2017/9/24 21:14 
+ * @date   2017/9/24 21:14
  */
 package utils
 
 import (
     "bytes"
-    //"crypto/sha256"
-    //"crypto/tls"
-    //"encoding/hex"
     "encoding/json"
     "errors"
     "fmt"
@@ -17,7 +14,6 @@ import (
     "io/ioutil"
     "net/http"
     "net/url"
-    //"os"
     "reflect"
     "regexp"
     "strconv"
@@ -27,20 +23,17 @@ import (
     "third/gin"
     "third/go-local"
     "third/http_client_cluster"
-    "third/httprouter"
 )
 
 const DEFAULT_API_TIMEOUT = 1 * time.Second
 
-var g_num int
-
-type CodoonApiResponse struct {
+type ApiResponse struct {
     Status string      `json:"status"`
     Data   interface{} `json:"data"`
     Desc   string      `json:"desc"`
 }
 
-func (this CodoonApiResponse) MarshalJSON() ([]byte, error) {
+func (this ApiResponse) MarshalJSON() ([]byte, error) {
     return json.Marshal(map[string]interface{}{
         "status": this.Status,
         "data":   this.Data,
@@ -48,21 +41,10 @@ func (this CodoonApiResponse) MarshalJSON() ([]byte, error) {
     })
 }
 
-func NewApiResponse(status string, data interface{}, desc string) CodoonApiResponse {
-    var resp CodoonApiResponse = CodoonApiResponse{"OK", nil, "success"}
-    return resp
-}
-
 func CodoonGetHeader(c *gin.Context) {
     // 获取token
     r := c.Request
     Logger.Info("+++++++++++request header: %+v", r.Header)
-}
-
-func NotFoundHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-    //io.WriteString(w, "404")
-    http.Error(w, "404 page not found", http.StatusNotFound)
-
 }
 
 var sliceOfInts = reflect.TypeOf([]int(nil))
@@ -187,27 +169,15 @@ func ParseHttpBodyToArgs(r *http.Request, args interface{}) error {
     var body []byte
     body, err = ioutil.ReadAll(r.Body)
     if err != nil {
-        Logger.Error("UpdateUserInfo read body err : %s,%v", r.FormValue("user_id"), err)
+        Logger.Error("ParseHttpBodyToArgs failed, read body err : %v", err)
         return err
     }
     defer r.Body.Close()
     if err := json.Unmarshal(body, args); err != nil {
-        Logger.Error("Unmarshal body : %s,%s,%v", r.FormValue("user_id"), string(body), err)
+        Logger.Error("ParseHttpBodyToArgs failed, Unmarshal body err: %s, %v", string(body), err)
         return err
     }
 
-    return err
-}
-
-func WriteRespToBody(w http.ResponseWriter, resp interface{}) error {
-
-    b, err := json.Marshal(resp)
-    if err != nil {
-        Logger.Error("Marshal json to bytes error :%v", err)
-        http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-        return err
-    }
-    w.Write(b)
     return err
 }
 
@@ -261,7 +231,7 @@ func HTMLUnEscape(src []byte) []byte {
 }
 
 func SendResponse(c *gin.Context, http_code int, data interface{}, err error) error {
-    var resp CodoonApiResponse = CodoonApiResponse{"OK", nil, "success"}
+    var resp ApiResponse = ApiResponse{"OK", nil, "success"}
     if err != nil {
         is_user_err, code, info := IsUserErr(err)
         if is_user_err {
@@ -274,14 +244,7 @@ func SendResponse(c *gin.Context, http_code int, data interface{}, err error) er
 
             // 500错误（user_error_code < 100）邮件发送
             if 500 == http_code {
-                //host_name, _ := os.Hostname()
-                //if IsOnline() {
-                //    user_id, _ := strconv.ParseInt(c.Request.FormValue("user_id"), 10, 0)
-                //    body := fmt.Sprintf("500 Code: \r\n<br> method: %s \r\n<br> uri: %s \r\n<br> hostname: %s \r\n<br> user_id: %d \r\n<br> trace_id: %s \r\n<br> err: %v", c.Request.Method, c.Request.URL.String(), host_name, user_id, local.TraceId(), err)
-                //    go SendAlertMail([]string{"liangbo@codoon.com", "liucx@codoon.com"}, body)
-                //}
             }
-
             return nil
         }
     } else {
@@ -317,92 +280,10 @@ func SendResponse(c *gin.Context, http_code int, data interface{}, err error) er
     return err
 }
 
-func SendFormRequest(http_method, urls string, header map[string]string, req_body map[string]string, resp_body interface{}) (int, error) {
-    client := &http.Client{}
-
-    var err error = nil
-    form := url.Values{}
-    var request *http.Request
-
-    for key, value := range req_body {
-        form.Set(key, value)
-    }
-
-    if "GET" == http_method {
-        request, _ = http.NewRequest(http_method, urls+"?"+form.Encode(), nil)
-    } else {
-        request, _ = http.NewRequest(http_method, urls, strings.NewReader(form.Encode()))
-        request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-    }
-
-    for key, value := range header {
-        request.Header.Add(key, value)
-    }
-
-    response, err := client.Do(request)
-    if nil != err {
-        Logger.Error("send request err :%v", err)
-        return 200, err
-    }
-
-    if response.StatusCode == 200 {
-        defer response.Body.Close()
-        decoder := json.NewDecoder(response.Body)
-        decoder.UseNumber()
-        decoder.Decode(&resp_body)
-    }
-
-    return response.StatusCode, err
-}
-
-func SendRequest(http_method, urls, method string, req_body interface{}) (int, error) {
-
-    Logger.Info("http:%s,%v", urls+method, req_body)
-    var err error = nil
-
-    request, _ := http.NewRequest(http_method, urls+method, nil)
-
-    if nil != req_body {
-        b, _ := json.Marshal(req_body)
-        request.Body = ioutil.NopCloser(strings.NewReader(string(b)))
-    }
-    /*
-        if "GET" == http_method {
-            request, _ = http.NewRequest(http_method, urls+method+"?"+form.Encode(), nil)
-        } else {
-            request, _ = http.NewRequest(http_method, urls+method, strings.NewReader(form.Encode()))
-            request.Header.Set("Content-Type", "application/json")
-        }
-    */
-    response, err := HttpClientClusterDo(request)
-    if nil != err {
-        err = NewInternalError(HttpErrCode, err)
-
-        Logger.Error("send request err :%v", err)
-        return 200, err
-    }
-
-    if response.StatusCode == 200 {
-        defer response.Body.Close()
-        body, err := ioutil.ReadAll(response.Body)
-        if nil == err {
-            Logger.Info("body:%v", string(body))
-        }
-    } else {
-        err = NewInternalError(HttpErrCode, fmt.Errorf("http code :%d", response.StatusCode))
-        Logger.Error("send request err :%v", err)
-        return 200, err
-    }
-
-    return response.StatusCode, err
-}
-
 // modified by linagbo on 2017-08-10, 定义不被转化成int的key
 var string_key map[string]int = map[string]int{
     "key":  1,
-    "nick": 1,
-    "club_name": 1,
-    "position": 1,
+    "nickname": 1,
 }
 
 func ParseHttpParamsToArgs(c *gin.Context, args map[string]interface{}, reply interface{}) error {
@@ -458,22 +339,25 @@ func ParseHttpParamsToArgs(c *gin.Context, args map[string]interface{}, reply in
 //    }
 //    c.Request.Body.Close()
 //    for _, param := range c.Params {
-//
-//        value_int, err := strconv.ParseInt(param.Value, 10, 0)
-//        if err != nil || 1 == string_key[param.Key] {
-//            args[param.Key] = param.Value
-//        } else {
-//            args[param.Key] = value_int
+//        if _, ok := args[param.Key]; !ok {
+//            value_int, err := strconv.ParseInt(param.Value, 10, 0)
+//            if err != nil || 1 == string_key[param.Key] {
+//                args[param.Key] = param.Value
+//            } else {
+//                args[param.Key] = value_int
+//            }
 //        }
 //    }
 //
 //    r.ParseForm()
 //    for key, value := range r.Form {
-//        value_int, err := strconv.ParseInt(value[0], 10, 0)
-//        if err != nil || 1 == string_key[key] {
-//            args[key] = value[0]
-//        } else {
-//            args[key] = value_int
+//        if _, ok := args[key]; !ok {
+//            value_int, err := strconv.ParseInt(value[0], 10, 0)
+//            if err != nil || 1 == string_key[key] {
+//                args[key] = value[0]
+//            } else {
+//                args[key] = value_int
+//            }
 //        }
 //    }
 //    args["user_agent"] = r.Header.Get("User-Agent")
@@ -589,92 +473,6 @@ func GinLogger() gin.HandlerFunc {
 
 var secretTable string = "_WY+Ytpa=A^Fm(Jl-rx@EVLl-Yx$v4+YgOhxB4s$Lqcen+BflOj_lgS3xuh5bSN-Jnhj69OSa(CmV5*91MRh8XIY423aPH_k$-u@XwaMgmPFCL1Ne-dx!kV$Q_US7f7fMV!H2CgjXmk)8aY3ftssyOrL-(c(UcW*QRd^8Fhcfs)A@qmR$8A8TFm8#)CvNE_CZ2lkvgVCC-vZaeDv^jb1QOv@W2+Ph!eQM=CtbtZPz(wX%gY)J$gdC8Rbc1L*(x6%tVO7RUutHAZF#6@sl(LzBP1DAzU7ttpHfqvKN$e5C@c!pg=@c$zL55$kg!8KJ$1SCbMbL^BYKaK9&_yxUU#XZF&GqY_tS!MN$zsWsLX*4uvCVG_EJ3-96qejb3z9m7e)BrmQMlTS9fVkA%5J5OL12BY8pzTJIeWC1z#jQaTwjnEl$cZj(sqY*LkMJG+(7l*ZNuY1rU5Tvcf6NH%5%7P8r&&yIsj=z2z4c=8VL5gelN-ZGOas$xpX8hf-qOK+MO8s"
 
-//func CodoonCheckSign(c *gin.Context) {
-//
-//    // 获取token
-//    var err error
-//    r := c.Request
-//    auth := r.Header.Get("Authorization")
-//    timeStamp := r.Header.Get("TimeStamp")
-//    xTable := r.Header.Get("XTable")
-//    userAgent := r.Header.Get("User-Agent")
-//    runSign := r.Header.Get("RunSign")
-//    urlStr := r.URL.Path
-//
-//    if auth == "Bearer test_a670ad8689961de2c725b8b79c28956e" {
-//        return
-//    }
-//    if "" == timeStamp || "" == runSign || "" == xTable {
-//        Logger.Error("sign failed")
-//        c.AbortWithStatus(http.StatusOK)
-//    }
-//
-//    user_id, err := strconv.ParseInt(r.FormValue("user_id"), 10, 0)
-//    if nil != err {
-//        Logger.Error("get userid error :%v", err)
-//    }
-//    user_ids := []int64{user_id}
-//    users, err := GetUserSummaryByIDs(user_ids, UserProfileClient)
-//    if nil != err {
-//        Logger.Error("get user summary by ids error :%v", err)
-//    }
-//    var phone string
-//    if user, ok := users[user_id]; ok {
-//        phone = user.Phone
-//    }
-//
-//    xIndexStrs := strings.Split(xTable, ",")
-//    var X []byte
-//    for i := range xIndexStrs {
-//        index, err := strconv.Atoi(xIndexStrs[i])
-//        if nil != err {
-//            Logger.Error("strconv.Atoi error :%s,%d", xTable, i)
-//        }
-//        X = append(X, secretTable[index])
-//    }
-//
-//    sercet := userAgent + auth + phone + timeStamp + urlStr + string(X)
-//
-//    table := sha256.New()
-//    table.Write([]byte(sercet))
-//    hastSercetStr := hex.EncodeToString(table.Sum(nil))
-//
-//    Logger.Info("first hash :%s", hastSercetStr)
-//
-//    table = sha256.New()
-//    table.Write([]byte(hastSercetStr + timeStamp))
-//    hastSercetStr = hex.EncodeToString(table.Sum(nil))
-//
-//    Logger.Info("sercet:%s,runSign:%s,hash:%s", sercet, runSign, hastSercetStr)
-//    if runSign == hastSercetStr {
-//        Logger.Info("sign success, %d", user_id)
-//        return
-//    } else {
-//
-//        sercet := userAgent + auth + timeStamp + urlStr + string(X)
-//
-//        table := sha256.New()
-//        table.Write([]byte(sercet))
-//        hastSercetStr := hex.EncodeToString(table.Sum(nil))
-//
-//        Logger.Info("first hash :%s", hastSercetStr)
-//
-//        table = sha256.New()
-//        table.Write([]byte(hastSercetStr + timeStamp))
-//        hastSercetStr = hex.EncodeToString(table.Sum(nil))
-//
-//        if runSign == hastSercetStr {
-//            Logger.Info("sign success, %d", user_id)
-//            return
-//        } else {
-//            Logger.Info("sign fail :%s,%s, %d", runSign, hastSercetStr, user_id)
-//            c.AbortWithStatus(http.StatusOK)
-//            return
-//        }
-//    }
-//    return
-//}
-
 func HttpRequest(method, url string, data []byte) (status int, body []byte, err error) {
     var data_reader io.Reader = nil
     if len(data) > 0 {
@@ -737,4 +535,65 @@ func GetGinRawPath(c *gin.Context) string {
     }
     fmt.Println("path :%s", path)
     return path
+}
+
+// stack returns a nicely formated stack frame, skipping skip frames
+func stack(skip int) []byte {
+    buf := new(bytes.Buffer) // the returned data
+    // As we loop, we open files and read them. These variables record the currently
+    // loaded file.
+    var lines [][]byte
+    var lastFile string
+    for i := skip; ; i++ { // Skip the expected number of frames
+        pc, file, line, ok := runtime.Caller(i)
+        if !ok {
+            break
+        }
+        // Print this much at least.  If we can't find the source, it won't show.
+        fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
+        if file != lastFile {
+            data, err := ioutil.ReadFile(file)
+            if err != nil {
+                continue
+            }
+            lines = bytes.Split(data, []byte{'\n'})
+            lastFile = file
+        }
+        fmt.Fprintf(buf, "\t%s: %s\n", function(pc), source(lines, line))
+    }
+    return buf.Bytes()
+}
+
+// function returns, if possible, the name of the function containing the PC.
+func function(pc uintptr) []byte {
+    fn := runtime.FuncForPC(pc)
+    if fn == nil {
+        return dunno
+    }
+    name := []byte(fn.Name())
+    // The name includes the path name to the package, which is unnecessary
+    // since the file name is already included.  Plus, it has center dots.
+    // That is, we see
+    //	runtime/debug.*T·ptrmethod
+    // and want
+    //	*T.ptrmethod
+    // Also the package path might contains dot (e.g. code.google.com/...),
+    // so first eliminate the path prefix
+    if lastslash := bytes.LastIndex(name, slash); lastslash >= 0 {
+        name = name[lastslash+1:]
+    }
+    if period := bytes.Index(name, dot); period >= 0 {
+        name = name[period+1:]
+    }
+    name = bytes.Replace(name, centerDot, dot, -1)
+    return name
+}
+
+// source returns a space-trimmed slice of the n'th line.
+func source(lines [][]byte, n int) []byte {
+    n-- // in stack trace, lines are 1-indexed but our array is 0-indexed
+    if n < 0 || n >= len(lines) {
+        return dunno
+    }
+    return bytes.TrimSpace(lines[n])
 }

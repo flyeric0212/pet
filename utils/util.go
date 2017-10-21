@@ -6,12 +6,18 @@
 package utils
 
 import (
-    "reflect"
     "bytes"
+    "crypto/aes"
+    "crypto/cipher"
+    "crypto/md5"
+    "crypto/rand"
+    "errors"
     "fmt"
-    "runtime"
+    "io"
     "io/ioutil"
-    "strings"
+    "reflect"
+    "encoding/hex"
+    "runtime"
 )
 
 var (
@@ -21,86 +27,84 @@ var (
     slash     = []byte("/")
 )
 
-func IsStructPtr(t reflect.Type) bool {
-    return t.Kind() == reflect.Ptr && t.Elem().Kind() == reflect.Struct
+var (
+    AESBlock       cipher.Block
+    ErrAESTextSize = errors.New("ciphertext is not a multiple of the block size")
+    ErrAESPadding  = errors.New("cipher padding size err")
+)
+
+var ses_res_chan chan struct{} = make(chan struct{}, 10) // aws ses send limit is 14 per second
+
+const (
+    AESTable = "shanghaipet1464345177----1577808000"
+)
+
+func init() {
+    var err error
+    AESBlock, err = aes.NewCipher([]byte(AESTable))
+    if err != nil {
+        panic(err)
+    }
+    loggerInit()
+
+    // init ses_res
+    for i := 0; i < 10; i++ {
+        ses_res_chan <- struct{}{}
+    }
 }
 
-// stack returns a nicely formated stack frame, skipping skip frames
-func stack(skip int) []byte {
-    buf := new(bytes.Buffer) // the returned data
-    // As we loop, we open files and read them. These variables record the currently
-    // loaded file.
-    var lines [][]byte
-    var lastFile string
-    for i := skip; ; i++ { // Skip the expected number of frames
-        pc, file, line, ok := runtime.Caller(i)
-        if !ok {
-            break
-        }
-        // Print this much at least.  If we can't find the source, it won't show.
-        fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
-        if file != lastFile {
-            data, err := ioutil.ReadFile(file)
-            if err != nil {
-                continue
-            }
-            lines = bytes.Split(data, []byte{'\n'})
-            lastFile = file
-        }
-        fmt.Fprintf(buf, "\t%s: %s\n", function(pc), source(lines, line))
+// aes 加密
+func AesEncrypt(srcStr string) string {
+    src := []byte(srcStr)
+    paddingLen := aes.BlockSize - (len(src) % aes.BlockSize)
+    for i := 0; i < paddingLen; i++ {
+        src = append(src, byte(paddingLen))
     }
-    return buf.Bytes()
-}
+    srcLen := len(src)
 
-// function returns, if possible, the name of the function containing the PC.
-func function(pc uintptr) []byte {
-    fn := runtime.FuncForPC(pc)
-    if fn == nil {
-        return dunno
-    }
-    name := []byte(fn.Name())
-    // The name includes the path name to the package, which is unnecessary
-    // since the file name is already included.  Plus, it has center dots.
-    // That is, we see
-    //	runtime/debug.*T·ptrmethod
-    // and want
-    //	*T.ptrmethod
-    // Also the package path might contains dot (e.g. code.google.com/...),
-    // so first eliminate the path prefix
-    if lastslash := bytes.LastIndex(name, slash); lastslash >= 0 {
-        name = name[lastslash+1:]
-    }
-    if period := bytes.Index(name, dot); period >= 0 {
-        name = name[period+1:]
-    }
-    name = bytes.Replace(name, centerDot, dot, -1)
-    return name
-}
-
-// source returns a space-trimmed slice of the n'th line.
-func source(lines [][]byte, n int) []byte {
-    n-- // in stack trace, lines are 1-indexed but our array is 0-indexed
-    if n < 0 || n >= len(lines) {
-        return dunno
-    }
-    return bytes.TrimSpace(lines[n])
-}
-
-func GetBetweenStr(str, start, end string) string {
-    n := strings.Index(str, start) + len(start)
-    if n == -1 {
-        n = 0
-    }
-    if n > len(str) {
+    encryptText := make([]byte, srcLen+aes.BlockSize)
+    iv := encryptText[srcLen:]
+    if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+        Logger.Error("aesencrypt err: %v", err)
         return ""
     }
-    str = string([]byte(str)[n:])
-    m := strings.Index(str, end)
-    if m == -1 {
-        m = len(str)
+
+    mode := cipher.NewCBCEncrypter(AESBlock, iv)
+    mode.CryptBlocks(encryptText[:srcLen], src)
+    return string(encryptText)
+}
+
+// ase 解密
+func AesDecrypt(srcStr string) string {
+    src := []byte(srcStr)
+    // 长度不小于aes.Blocksize * 2
+    if len(src) < aes.BlockSize*2 || len(src)%aes.BlockSize != 0 {
+        Logger.Error("aesdecrypt err: %v", ErrAESTextSize)
+        return ""
     }
-    str = string([]byte(str)[:m])
-    return str
+
+    srcLen := len(src) - aes.BlockSize
+    decyptText := make([]byte, srcLen)
+    iv := src[srcLen:]
+    mode := cipher.NewCBCDecrypter(AESBlock, iv)
+    mode.CryptBlocks(decyptText, src[:srcLen])
+    paddingLen := int(decyptText[srcLen-1])
+    if paddingLen > 16 || paddingLen <= 0 {
+        Logger.Error("aesdecrypt err: %v", ErrAESPadding)
+        return ""
+    }
+
+    return string(decyptText[:(srcLen - paddingLen)])
+}
+
+func MD5(p []byte) string {
+    sum := md5.Sum(p)
+    return hex.EncodeToString(sum[:])
+}
+
+
+func IsStructPtr(t reflect.Type) bool {
+    return t.Kind() == reflect.Ptr && t.Elem().Kind() == reflect.Struct
 }
 
 //Be careful to use, from,to must be pointer
@@ -124,3 +128,4 @@ func DumpStruct(to interface{}, from interface{}) {
         }
     }
 }
+

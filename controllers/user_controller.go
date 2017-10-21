@@ -11,11 +11,11 @@ import (
     "pet/utils"
 )
 
-// 用户注册
-func UserRegist(args *protocol.UserRegistArgs, reply *protocol.UserRegistReply) error {
+// 用户电话注册
+func UserPhoneRegist(args *protocol.UserPhoneRegistArgs, reply *protocol.UserPhoneRegistReply) error {
     var err error
 
-    user_model := new(models.UserProfile)
+    user_model := new(models.User)
     utils.DumpStruct(user_model, &args)
 
     err = user_model.Create(&reply.UserId)

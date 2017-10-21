@@ -21,8 +21,15 @@ func StartHttpServer() {
     router.Use(GinSetTraceInfo())
     //router.Use(util.GinCrossDomain())
 
+    // weixin
     router.GET("/wx_callback", WxCallbackHandler)
     router.POST("/wx_callback", WxCallbackHandler)
+
+
+    // user
+    user_router := router.Group("/api/users")
+    user_router.POST("/phone_regist", UserPhoneRegist)
+
 
     router.Run(utils.Config.Listen)
     //router.Run(":80")
