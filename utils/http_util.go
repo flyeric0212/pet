@@ -156,30 +156,65 @@ func ParseForm(form url.Values, obj interface{}) error {
     return nil
 }
 
-func ParseHttpBodyToArgs(r *http.Request, args interface{}) error {
+func ParseHttpBodyToArgs(c *gin.Context, args interface{}) error {
+    var err error
+    var args_map map[string]interface{} = make(map[string]interface{})
 
-    err := r.ParseForm()
-    if nil != err {
-        err = NewInternalError(DecodeErrCode, err)
-    }
-    err = ParseForm(r.Form, args)
-    if nil != err {
-        err = NewInternalError(DecodeErrCode, err)
-    }
+    r := c.Request
+    if nil != c.Request.Body {
+        decoder := json.NewDecoder(r.Body)
+        decoder.UseNumber()
+        decoder.Decode(&args)
 
-    var body []byte
-    body, err = ioutil.ReadAll(r.Body)
-    if err != nil {
-        Logger.Error("ParseHttpBodyToArgs failed, read body err : %v", err)
-        return err
     }
-    defer r.Body.Close()
-    if body != nil && len(body) > 0 {
-        if err := json.Unmarshal(body, args); err != nil {
-            Logger.Error("ParseHttpBodyToArgs failed, Unmarshal body err: %s, %v", string(body), err)
-            return err
+    c.Request.Body.Close()
+    for _, param := range c.Params {
+        if _, ok := args_map[param.Key]; !ok {
+            value_int, err := strconv.ParseInt(param.Value, 10, 0)
+            if err != nil || 1 == string_key[param.Key] {
+                args_map[param.Key] = param.Value
+            } else {
+                args_map[param.Key] = value_int
+            }
         }
     }
+
+    r.ParseForm()
+    for key, value := range r.Form {
+        if _, ok := args_map[key]; !ok {
+            value_int, err := strconv.ParseInt(value[0], 10, 0)
+            if err != nil || 1 == string_key[key] {
+                args_map[key] = value[0]
+            } else {
+                args_map[key] = value_int
+            }
+        }
+    }
+
+    err = MapToStruct(args, args_map, "json")
+
+    //err := r.ParseForm()
+    //if nil != err {
+    //    err = NewInternalError(DecodeErrCode, err)
+    //}
+    //err = ParseForm(r.Form, args)
+    //if nil != err {
+    //    err = NewInternalError(DecodeErrCode, err)
+    //}
+    //
+    //var body []byte
+    //body, err = ioutil.ReadAll(r.Body)
+    //if err != nil {
+    //    Logger.Error("ParseHttpBodyToArgs failed, read body err : %v", err)
+    //    return err
+    //}
+    //defer r.Body.Close()
+    //if body != nil && len(body) > 0 {
+    //    if err := json.Unmarshal(body, args); err != nil {
+    //        Logger.Error("ParseHttpBodyToArgs failed, Unmarshal body err: %s, %v", string(body), err)
+    //        return err
+    //    }
+    //}
 
     return err
 }
@@ -281,50 +316,7 @@ func SendResponse(c *gin.Context, http_code int, data interface{}, err error) er
 
 // modified by linagbo on 2017-08-10, 定义不被转化成int的key
 var string_key map[string]int = map[string]int{
-    "key":  1,
-    "nickname": 1,
-}
 
-func ParseHttpParamsToArgs(c *gin.Context, args map[string]interface{}, reply interface{}) error {
-    var err error
-
-    r := c.Request
-    if nil != c.Request.Body {
-        decoder := json.NewDecoder(r.Body)
-        decoder.UseNumber()
-        decoder.Decode(&args)
-
-    }
-    c.Request.Body.Close()
-    for _, param := range c.Params {
-        if 1 == string_key[param.Key] {
-            args[param.Key] = param.Value
-        } else {
-            value_int, err := strconv.ParseInt(param.Value, 10, 0)
-            if err != nil {
-                args[param.Key] = param.Value
-            } else {
-                args[param.Key] = value_int
-            }
-        }
-    }
-
-    for key, value := range r.Form {
-        if 1 == string_key[key] {
-            args[key] = value[0]
-        } else {
-            value_int, err := strconv.ParseInt(value[0], 10, 0)
-            if err != nil {
-                args[key] = value[0]
-            } else {
-                args[key] = value_int
-            }
-        }
-    }
-
-    args["user_agent"] = r.Header.Get("User-Agent")
-    Logger.Info("api request args: %+v", args)
-    return err
 }
 
 //func ForwardHttpToRpc(c *gin.Context, client *RpcClient, method string, args map[string]interface{}, reply interface{}, http_code *int) error {

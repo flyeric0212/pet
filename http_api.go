@@ -23,7 +23,7 @@ func UserPhoneRegist(c *gin.Context) {
     var reply protocol.UserPhoneRegistReply
 
     r := c.Request
-    err := utils.ParseHttpBodyToArgs(r, &args)
+    err := utils.ParseHttpBodyToArgs(c, &args)
     if nil != err {
         goto NOTICE
     }
@@ -45,7 +45,7 @@ func UserNicknameRegist(c *gin.Context) {
     var reply protocol.UserNicknameRegistReply
 
     r := c.Request
-    err := utils.ParseHttpBodyToArgs(r, &args)
+    err := utils.ParseHttpBodyToArgs(c, &args)
     if nil != err {
         goto NOTICE
     }
@@ -67,7 +67,7 @@ func UserNicknameLogin(c *gin.Context) {
     var reply protocol.UserNicknameLoginReply
 
     r := c.Request
-    err := utils.ParseHttpBodyToArgs(r, &args)
+    err := utils.ParseHttpBodyToArgs(c, &args)
     if nil != err {
         goto NOTICE
     }
@@ -89,7 +89,7 @@ func GetBannerListByPage(c *gin.Context) {
     var reply protocol.BannerListReply
 
     r := c.Request
-    err := utils.ParseHttpBodyToArgs(r, &args)
+    err := utils.ParseHttpBodyToArgs(c, &args)
     if nil != err {
         goto NOTICE
     }
