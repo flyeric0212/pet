@@ -11,7 +11,7 @@ import (
     "runtime"
     "fmt"
     "pet/utils"
-    "pet/models"
+    "pet/model"
     _ "third/go-sql-driver/mysql"
 )
 
@@ -51,7 +51,7 @@ func main() {
     }
 
     // init db
-    err = models.InitAllDB()
+    err = model.InitAllDB()
     if err != nil {
         fmt.Printf("init db failed, err: %v", err)
         return

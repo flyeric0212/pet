@@ -3,7 +3,7 @@
  * @email  liangbogopher87@gmail.com
  * @date   2017/10/11 23:15 
  */
-package models
+package model
 
 // 宠物表
 type Pet struct {

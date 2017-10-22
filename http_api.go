@@ -11,7 +11,7 @@ import (
     "net/http"
     "pet/protocol"
     "pet/utils"
-    "pet/controllers"
+    "pet/controller"
 )
 
 // 用户电话注册
@@ -27,7 +27,7 @@ func UserPhoneRegist(c *gin.Context) {
     if nil != err {
         goto NOTICE
     }
-    err = controllers.UserPhoneRegist(&args, &reply)
+    err = controller.UserPhoneRegist(&args, &reply)
 
 NOTICE:
     g_logger.Notice("[cmd:user_phone_regist][user_id:%s][Cost:%dus][Err:%v]",
@@ -49,7 +49,7 @@ func UserNicknameRegist(c *gin.Context) {
     if nil != err {
         goto NOTICE
     }
-    err = controllers.UserNicknameRegist(&args, &reply)
+    err = controller.UserNicknameRegist(&args, &reply)
 
 NOTICE:
     g_logger.Notice("[cmd:user_nickname_regist][user_id:%s][Cost:%dus][Err:%v]",
@@ -71,7 +71,7 @@ func UserNicknameLogin(c *gin.Context) {
     if nil != err {
         goto NOTICE
     }
-    err = controllers.UserNicknameLogin(&args, &reply)
+    err = controller.UserNicknameLogin(&args, &reply)
 
 NOTICE:
     g_logger.Notice("[cmd:user_nickname_login][user_id:%s][Cost:%dus][Err:%v]",

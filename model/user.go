@@ -3,7 +3,7 @@
  * @email  liangbogopher87@gmail.com
  * @date   2017/10/11 22:58 
  */
-package models
+package model
 
 import (
     "time"

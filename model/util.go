@@ -3,7 +3,7 @@
  * @email  liangbogopher87@gmail.com
  * @date   2017/9/24 21:01 
  */
-package models
+package model
 
 import (
     "third/gorm"
