@@ -35,6 +35,10 @@ func StartHttpServer() {
     user_router.POST("/nickname_regist", UserNicknameRegist)
     user_router.POST("/nickname_login", UserNicknameLogin)
 
+    // banner
+    banner_router := router.Group("/api/banner")
+    banner_router.GET("/get_banner_list", GetBannerListByPage)
+
     router.Run(utils.Config.Listen)
     //router.Run(":80")
 }

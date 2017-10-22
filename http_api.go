@@ -79,3 +79,25 @@ NOTICE:
 
     utils.SendResponse(c, http_code, &reply.User, err)
 }
+
+// 分页获取banner列表
+func GetBannerListByPage(c *gin.Context) {
+    var http_code int = http.StatusOK
+    handle_start_time := time.Now()
+
+    var args protocol.BannerListArgs
+    var reply protocol.BannerListReply
+
+    r := c.Request
+    err := utils.ParseHttpBodyToArgs(r, &args)
+    if nil != err {
+        goto NOTICE
+    }
+    err = controller.GetBannerListByPage(&args, &reply)
+
+NOTICE:
+    g_logger.Notice("[cmd:banner_list_by_page][user_id:%s][Cost:%dus][Err:%v]",
+        r.FormValue("user_id"), time.Now().Sub(handle_start_time).Nanoseconds()/1000, err)
+
+    utils.SendResponse(c, http_code, &reply, err)
+}
