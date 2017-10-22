@@ -24,6 +24,7 @@ import (
     "third/go-local"
     "third/http_client_cluster"
     "runtime"
+    "blast/common/util"
 )
 
 const DEFAULT_API_TIMEOUT = 1 * time.Second
@@ -191,6 +192,7 @@ func ParseHttpBodyToArgs(c *gin.Context, args interface{}) error {
         }
     }
 
+    util.Logger.Info("parse body map args: %+v", args_map)
     err = MapToStruct(args, args_map, "json")
 
     //err := r.ParseForm()
