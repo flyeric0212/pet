@@ -50,6 +50,7 @@ func CheckNicknameExist(nickname string) (err error, flag bool, user_info *User)
     err = PET_DB.Table("pet.user").Where("nickname = ?", nickname).Limit(1).Find(user_info).Error
     if err == gorm.RecordNotFound {
         flag = false
+        err = nil
     } else if err == nil {
         flag = true
     } else {
