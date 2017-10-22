@@ -240,13 +240,8 @@ func SendResponse(c *gin.Context, http_code int, data interface{}, err error) er
             resp.Data = code
             resp.Desc = info
         } else {
-            //CheckError(err)
             http_code = 500
             c.String(http_code, http.StatusText(http_code))
-
-            // 500错误（user_error_code < 100）邮件发送
-            if 500 == http_code {
-            }
             return nil
         }
     } else {
