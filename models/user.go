@@ -33,6 +33,7 @@ func (user_info *User) TableName() string {
 // 新建用户
 func (user_info *User) Create(id *int64) error {
     user_info.CreateTime = time.Now()
+    user_info.UpdateTime = time.Now()
 
     err := PET_DB.Table(user_info.TableName()).Create(user_info).Error
     if nil != err {
