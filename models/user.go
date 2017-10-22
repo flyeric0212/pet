@@ -46,8 +46,8 @@ func (user_info *User) Create(id *int64) error {
 
 // 判断昵称是否存在
 func CheckNicknameExist(nickname string) (err error, flag bool, user_info *User) {
-
-    err = PET_DB.Table("pet.user").Where("nickname = ?", nickname).Last(&user_info).Error
+    user_info = new(User)
+    err = PET_DB.Table("pet.user").Where("nickname = ?", nickname).Limit(1).Find(user_info).Error
     if err == gorm.RecordNotFound {
         flag = false
     } else if err == nil {
