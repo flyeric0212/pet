@@ -16,7 +16,7 @@ type User struct {
     UserId          int64           `gorm:"primary_key"; sql:"AUTO_INCREMENT"`
     Name            string          `sql:"type:varchar(128)"`   // 姓名
     Nickname        string          `sql:"type:varchar(128)"`  // 昵称
-    Password        string          `sql:"type:varchar(128)"`
+    Password        string          `sql:"type:varbinary(128)"`
     Gender          string          `sql:"type:smallint(6)"`    // 性别，0: 无性别 1: 男 2: 女
     Phone           string          `sql:"type:varchar(64)"`
     Email           string          `sql:"type:varchar(128)"`
