@@ -2,8 +2,8 @@
 # [错误码说明]
 
 [data]
-+ 200： OK
-+ 500： Internal Server Error
++ 200: OK
++ 500: Internal Server Error
 + 501: 参数异常
 + 502: 用户名重复
 + 503: 用户名不存在
