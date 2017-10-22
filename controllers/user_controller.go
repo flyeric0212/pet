@@ -40,7 +40,7 @@ func UserNicknameRegist(args *protocol.UserNicknameRegistArgs, reply *protocol.U
 
     // 判断参数是否异常
     if args.Nickname == "" || args.Password == "" {
-        err = utils.NewInternalErrByStrDefault(utils.ParameterErrCode)
+        err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "用户名或密码为空")
         utils.Logger.Error("UserNicknameRegist failed, param err: %s \n", err.Error())
         return err
     }
@@ -78,7 +78,7 @@ func UserNicknameLogin(args *protocol.UserNicknameLoginArgs, reply *protocol.Use
 
     // 判断参数是否异常
     if args.Nickname == "" || args.Password == "" {
-        err = utils.NewInternalErrByStrDefault(utils.ParameterErrCode)
+        err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "用户名或密码为空")
         utils.Logger.Error("UserNicknameLogin failed, param err: %s \n", err.Error())
         return err
     }
