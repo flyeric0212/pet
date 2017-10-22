@@ -130,3 +130,45 @@
 			"data": (required, string, '', '返回错误code'),
 			"desc": (required, string, '', '返回描述，错误时描述')
 		}
+
+# [文章列表 - `POST /api/article/get_article_list`]
++ **创建**(`liangbo`, `2017-10-22`)
+
++ Description
+
+		article列表，分页
+
++ Request:
+
+		{
+			“type”: (optional, int, 类型，1:会展动态),
+			"page_num": (optional, int，页码，默认1)
+			"page_size": (optional, int, 分页大小，默认10)
+		}
+
++ Response Succ:
+
+	     {
+		 	"status": "OK",
+		  	"data": {
+                "article_list": [
+                    {
+                        "id": (int, 主键),
+                        "titile": (string, 标题),
+                        "content": (string, 内容),
+                        "type": (int, 文章类型)
+                    },
+                    ...
+                ],
+                "total_num": (int, 总数)
+		  	}
+		   	"desc": ""
+	      }
+
++ Response Error:
+
+		{
+			"status": (required, string, 'Error', '返回状态 OK/Error'),
+			"data": (required, string, '', '返回错误code'),
+			"desc": (required, string, '', '返回描述，错误时描述')
+		}
