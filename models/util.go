@@ -45,6 +45,7 @@ func CopyUserData(from *User, dst *protocol.UserInfoJson) error {
     dst.UserId = from.UserId
     dst.Name = from.Name
     dst.Nickname = from.Nickname
+    dst.Avatar = from.Avatar
     dst.Gender = from.Gender
     dst.Phone = from.Phone
     dst.Email = from.Email

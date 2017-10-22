@@ -15,6 +15,7 @@ type UserInfoJson struct {
     UserId          int64           `json:"user_id"`
     Name            string          `json:"name"`       // 姓名
     Nickname        string          `json:"nickname"`   // 昵称
+    Avatar          string          `json:"avatar"`     // 头像
     Gender          string          `json:"gender"`     // 性别，0: 无性别 1: 男 2: 女
     Phone           string          `json:"phone"`
     Email           string          `json:"email"`

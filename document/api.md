@@ -32,6 +32,7 @@
                  "user_id": (int, 用户id)
                  "name": (string, 姓名),
                  "nickname": (string, 用户名),
+                 "avatar": (string, 头像),
                  "gender": (string, 性别，0: 无性别 1: 男 2: 女),
                  "phone": (string, 电话号码),
                  "email": (string, 邮件地址),
@@ -71,6 +72,7 @@
                  "user_id": (int, 用户id)
                  "name": (string, 姓名),
                  "nickname": (string, 用户名),
+                 "avatar": (string, 头像),
                  "gender": (string, 性别，0: 无性别 1: 男 2: 女),
                  "phone": (string, 电话号码),
                  "email": (string, 邮件地址),
