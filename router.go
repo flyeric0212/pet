@@ -39,6 +39,10 @@ func StartHttpServer() {
     banner_router := router.Group("/api/banner")
     banner_router.GET("/get_banner_list", GetBannerListByPage)
 
+    // article
+    article_router := router.Group("/api/article")
+    article_router.GET("get_article_list", GetArticleListByPage)
+
     router.Run(utils.Config.Listen)
     //router.Run(":80")
 }
