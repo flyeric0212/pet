@@ -164,7 +164,7 @@ func ParseHttpBodyToArgs(c *gin.Context, args interface{}) error {
     if nil != c.Request.Body {
         decoder := json.NewDecoder(r.Body)
         decoder.UseNumber()
-        decoder.Decode(&args)
+        decoder.Decode(&args_map)
 
     }
     c.Request.Body.Close()
