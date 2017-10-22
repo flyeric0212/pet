@@ -9,6 +9,7 @@ import (
     "third/gorm"
     "fmt"
     "pet/utils"
+    "pet/protocol"
 )
 
 var PET_DB *gorm.DB
@@ -37,4 +38,17 @@ func InitPetDb(config *utils.Configure) (*gorm.DB, error) {
         return nil, err
     }
     return PET_DB, nil
+}
+
+func CopyUserData(from *User, dst *protocol.UserInfoJson) error {
+    //copy部分user的字段返回给api层
+    dst.UserId = from.UserId
+    dst.Name = from.Name
+    dst.Nickname = from.Nickname
+    dst.Gender = from.Gender
+    dst.Phone = from.Phone
+    dst.Email = from.Email
+    dst.Openid = from.Openid
+
+    return nil
 }

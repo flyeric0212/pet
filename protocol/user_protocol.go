@@ -22,6 +22,7 @@ type UserInfoJson struct {
 }
 
 // ++++++++++++++++++++ 请求参数的数据格式 ++++++++++++++++++++++
+// 电话注册
 type UserPhoneRegistArgs struct {
     local.TraceParam
 
@@ -31,7 +32,28 @@ type UserPhoneRegistArgs struct {
     Email           string          `json:"email"`
     Openid          string          `json:"openid"`     // 微信用户凭证
 }
-
 type UserPhoneRegistReply struct {
-    UserId          int64           `json:"user_id"`
+    User          UserInfoJson      `json:"user_info"`
+}
+
+// 用户昵称注册
+type UserNicknameRegistArgs struct {
+    local.TraceParam
+
+    Nickname        string          `json:"nickname"`
+    Password        string          `json:"password"`
+}
+type UserNicknameRegistReply struct {
+    User          UserInfoJson           `json:"user_info"`
+}
+
+// 用户昵称登陆
+type UserNicknameLoginArgs struct {
+    local.TraceParam
+
+    Nickname        string          `json:"nickname"`
+    Password        string          `json:"password"`
+}
+type UserNicknameLoginReply struct {
+    User          UserInfoJson           `json:"user_info"`
 }

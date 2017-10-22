@@ -20,18 +20,16 @@ const (
     DbErrCode         		ErrCode = 2
     CacheErrCode      		ErrCode = 3
     DecodeErrCode     		ErrCode = 4
-    EncodeErrCode     		ErrCode = 5
-    RPCErrCode        		ErrCode = 6
-    HttpErrCode       		ErrCode = 7
-
 
     //400以后禁用
     UserNotFoundCode    	ErrCode = 100
 
 
     //直接抛给用户的错误码
-    //global
     ParameterErrCode      	ErrCode = 501 	// 参数异常
+    NicknameRepeatErrCode   ErrCode = 502   // 昵称重复
+    NicknameNotFoundErrCode ErrCode = 503   // 昵称不存在
+    PasswordWrongErrCode    ErrCode = 504   // 密码错误
 
 
     MaxUserError 			ErrCode = 9999

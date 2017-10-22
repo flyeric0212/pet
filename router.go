@@ -29,7 +29,8 @@ func StartHttpServer() {
     // user
     user_router := router.Group("/api/users")
     user_router.POST("/phone_regist", UserPhoneRegist)
-
+    user_router.POST("/nickname_regist", UserNicknameRegist)
+    user_router.POST("/nickname_login", UserNicknameLogin)
 
     router.Run(utils.Config.Listen)
     //router.Run(":80")

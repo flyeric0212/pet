@@ -6,18 +6,14 @@
 package utils
 
 import (
-    "bytes"
     "crypto/aes"
     "crypto/cipher"
     "crypto/md5"
     "crypto/rand"
     "errors"
-    "fmt"
     "io"
-    "io/ioutil"
     "reflect"
     "encoding/hex"
-    "runtime"
 )
 
 var (
