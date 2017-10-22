@@ -10,7 +10,7 @@
 + 504: 密码错误
 
 
-# [用户名注册 - `POST /api/users/user_nickname_regist`]
+# [用户名注册 - `POST /api/users/nickname_regist`]
 + **创建**(`liangbo`, `2017-10-20`)
 
 + Description
@@ -43,7 +43,7 @@
 		}
 
 
-# [用户名登陆 - `POST /api/users/user_nickname_login`]
+# [用户名登陆 - `POST /api/users/nickname_login`]
 + **创建**(`liangbo`, `2017-10-20`)
 
 + Description

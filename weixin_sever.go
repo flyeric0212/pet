@@ -30,7 +30,6 @@ var (
     msgServer  *core.Server
 
     accessTokenServer core.AccessTokenServer
-    wechatClient      *core.Client
 )
 
 func InitWeixinServer() {
@@ -51,7 +50,6 @@ func InitWeixinServer() {
 
     msgServer           = core.NewServer(wxOriId, wxAppId, wxToken, wxEncodedAESKey, msgHandler, nil)
     accessTokenServer   = core.NewDefaultAccessTokenServer(wxAppId, wxAppSecret, nil)
-    wechatClient        = core.NewClient(accessTokenServer, nil)
 }
 
 func defaultMsgHandler(ctx *core.Context) {
