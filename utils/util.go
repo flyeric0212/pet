@@ -15,7 +15,7 @@ import (
     "reflect"
     "encoding/hex"
     "fmt"
-    "strings"
+    //"strings"
 )
 
 var (
@@ -149,15 +149,18 @@ func MapToStruct(to interface{}, from map[string]interface{}, tag string) error 
         }
 
         fieldT := toT.Field(i)
-        tags := strings.Split(fieldT.Tag.Get(tag), ",")
+
         var tag string
-        if len(tags) == 0 || len(tags[0]) == 0 {
-            tag = fieldT.Name
-        } else if tags[0] == "-" {
-            continue
-        } else {
-            tag = tags[0]
-        }
+        tag = fieldT.Name
+
+        //tags := strings.Split(fieldT.Tag.Get(tag), ",")
+        //if len(tags) == 0 || len(tags[0]) == 0 {
+        //    tag = fieldT.Name
+        //} else if tags[0] == "-" {
+        //    continue
+        //} else {
+        //    tag = tags[0]
+        //}
 
         value, ok := from[tag]
         if !ok {
