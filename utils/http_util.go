@@ -174,9 +174,11 @@ func ParseHttpBodyToArgs(r *http.Request, args interface{}) error {
         return err
     }
     defer r.Body.Close()
-    if err := json.Unmarshal(body, args); err != nil {
-        Logger.Error("ParseHttpBodyToArgs failed, Unmarshal body err: %s, %v", string(body), err)
-        return err
+    if body != nil && len(body) > 0 {
+        if err := json.Unmarshal(body, args); err != nil {
+            Logger.Error("ParseHttpBodyToArgs failed, Unmarshal body err: %s, %v", string(body), err)
+            return err
+        }
     }
 
     return err
