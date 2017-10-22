@@ -387,17 +387,7 @@ func GinRecovery() gin.HandlerFunc {
                 Logger.Error("PANIC: %s\n%s", err, stack)
 
                 c.Writer.WriteHeader(http.StatusInternalServerError)
-
-                //host_name, _ := os.Hostname()
-                //if IsOnline() {
-                //    user_id, _ := strconv.ParseInt(c.Request.FormValue("user_id"), 10, 0)
-                //    body := fmt.Sprintf("Recovery err: \r\n<br> method: %s \r\n<br> uri: %s \r\n<br> hostname: %s \r\n<br> user_id: %d \r\n<br> trace_id: %s \r\n<br> err: %v", c.Request.Method, c.Request.URL.String(), host_name, user_id, local.TraceId(), err)
-                //    go SendAlertMail([]string{"liangbo@codoon.com", "liucx@codoon.com"}, body)
-                //
-                //    SendSmsChina("8618501790857", "500 code: "+c.Request.URL.String()+" "+host_name)
-                //}
             }
-
         }()
 
         c.Next()

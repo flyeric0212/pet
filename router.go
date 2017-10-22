@@ -19,6 +19,9 @@ import (
 func StartHttpServer() {
     router := gin.Default()
     router.Use(GinSetTraceInfo())
+    router.Use(utils.GinFilter())
+    router.Use(utils.GinRecovery())
+    router.Use(utils.GinLogger())
     //router.Use(util.GinCrossDomain())
 
     // weixin
