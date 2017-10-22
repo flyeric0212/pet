@@ -22,8 +22,8 @@ type BannerListArgs struct {
     local.TraceParam
 
     Type                int         `json:"type"`
-    PageNum     		int			`json:"page_num"`
-    PageSize    		int         `json:"page_size"`
+    PageNum     		int			`json:"page_num" mapstructure:"page_num"`
+    PageSize    		int         `json:"page_size" mapstructure:"page_size"`
 }
 type BannerListReply struct {
     BannerList          []BannerInfoJson    `json:"banner_list"`
