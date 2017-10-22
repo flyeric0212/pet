@@ -88,3 +88,45 @@
 			"data": (required, string, '', '返回错误code'),
 			"desc": (required, string, '', '返回描述，错误时描述')
 		}
+
+# [Banner列表 - `POST /api/banner/get_banner_list`]
++ **创建**(`liangbo`, `2017-10-22`)
+
++ Description
+
+		banner列表，分页
+
++ Request:
+
+		{
+			“type”: (optional, int, 类型，1:首页 2:展商 3: 合作媒体),
+			"page_num": (optional, int，页码，默认1)
+			"page_size": (optional, int, 分页大小，默认10)
+		}
+
++ Response Succ:
+
+	     {
+		 	"status": "OK",
+		  	"data": {
+                "banner_list": [
+                    {
+                        "id": (int, 主键),
+                        "pic": (string, 图片地址),
+                        "ref_url": (string, 跳转地址),
+                        "type": (int, banner类型)
+                    },
+                    ...
+                ],
+                "total_num": (int, 总数)
+		  	}
+		   	"desc": ""
+	      }
+
++ Response Error:
+
+		{
+			"status": (required, string, 'Error', '返回状态 OK/Error'),
+			"data": (required, string, '', '返回错误code'),
+			"desc": (required, string, '', '返回描述，错误时描述')
+		}
