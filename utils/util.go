@@ -32,7 +32,7 @@ var (
 var ses_res_chan chan struct{} = make(chan struct{}, 10) // aws ses send limit is 14 per second
 
 const (
-    AESTable = "shanghaipet1464345177----1577808000"
+    AESTable = "shanghaipet1464345----1577808000"
 )
 
 func init() {
