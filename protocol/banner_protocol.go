@@ -7,8 +7,14 @@ package protocol
 
 import (
     "third/go-local"
-    "pet/model"
 )
+
+type BannerInfoJson struct {
+    Id              int64           `json:"id"`
+    Pic             string          `json:"pic"`
+    RefUrl          string          `json:"ref_url"`
+    Type            int             `json:"type"` // 类型，1:首页 2:展商 3: 合作媒体
+}
 
 // ++++++++++++++++++++ 请求参数的数据格式 ++++++++++++++++++++++
 
@@ -20,6 +26,6 @@ type BannerListArgs struct {
     PageSize    		int         `json:"page_size"`
 }
 type BannerListReply struct {
-    BannerList          []model.Banner  `json:"banner_list"`
-    TotalNum		    int 			`json:"total_num"`
+    BannerList          []BannerInfoJson    `json:"banner_list"`
+    TotalNum		    int 			    `json:"total_num"`
 }

@@ -27,8 +27,16 @@ func GetBannerListByPage(args *protocol.BannerListArgs, reply *protocol.BannerLi
     if nil != err {
         return err
     }
+    if banner_list == nil || len(banner_list) == 0 {
+        reply.BannerList = make([]protocol.BannerInfoJson, 0)
+    } else {
+        reply.BannerList = make([]protocol.BannerInfoJson, len(banner_list))
+        // format data
+        for i := range banner_list {
+            utils.DumpStruct(&reply.BannerList[i], &banner_list[i])
+        }
+    }
 
-    reply.BannerList = banner_list
     reply.TotalNum = total_num
 
     return nil
