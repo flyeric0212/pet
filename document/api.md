@@ -89,7 +89,8 @@
 			"desc": (required, string, '', '返回描述，错误时描述')
 		}
 
-# [Banner列表 - `POST /api/banner/get_banner_list`]
+
+# [Banner列表 - `GET /api/banner/get_banner_list`]
 + **创建**(`liangbo`, `2017-10-22`)
 
 + Description
@@ -131,7 +132,8 @@
 			"desc": (required, string, '', '返回描述，错误时描述')
 		}
 
-# [文章列表 - `POST /api/article/get_article_list`]
+
+# [文章列表 - `GET /api/article/get_article_list`]
 + **创建**(`liangbo`, `2017-10-22`)
 
 + Description
