@@ -14,8 +14,6 @@ import (
     "io"
     "reflect"
     "encoding/hex"
-    "fmt"
-    //"strings"
 )
 
 var (
@@ -126,71 +124,3 @@ func DumpStruct(to interface{}, from interface{}) {
         }
     }
 }
-
-// tag: form, json, 不填默认为json
-func MapToStruct(to interface{}, from map[string]interface{}, tag string) error {
-    var err error
-    toV := reflect.ValueOf(to)
-    if toV.Kind() != reflect.Ptr {
-        err = fmt.Errorf("not a ptr")
-        return err
-    }
-    if tag == "" {
-        tag = "json"
-    }
-
-    toT := reflect.TypeOf(to).Elem()
-    toV = toV.Elem()
-
-    for i := 0; i < toT.NumField(); i++ {
-        fieldV := toV.Field(i)
-        if !fieldV.CanSet() {
-            continue
-        }
-
-        fieldT := toT.Field(i)
-
-        var tag string
-        tag = fieldT.Name
-
-        //tags := strings.Split(fieldT.Tag.Get(tag), ",")
-        //if len(tags) == 0 || len(tags[0]) == 0 {
-        //    tag = fieldT.Name
-        //} else if tags[0] == "-" {
-        //    continue
-        //} else {
-        //    tag = tags[0]
-        //}
-
-        value, ok := from[tag]
-        if !ok {
-            continue
-        }
-        // fmt.Println("value type: ", reflect.ValueOf(value).Kind())
-
-        // fieldV.Set(reflect.ValueOf(value))
-        switch fieldT.Type.Kind() {
-        case reflect.Interface:
-            fieldV.Set(reflect.ValueOf(value))
-        case reflect.String:
-            fieldV.SetString(value.(string))
-        case reflect.Bool:
-            fieldV.SetBool(value.(bool))
-        case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-            if reflect.ValueOf(value).Kind() == reflect.Int { //
-                fieldV.SetInt(int64(value.(int)))
-            }
-        case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-            if reflect.ValueOf(value).Kind() == reflect.Int {
-                fieldV.SetUint(uint64(value.(int)))
-            }
-        case reflect.Float32, reflect.Float64:
-            if reflect.ValueOf(value).Kind() == reflect.Float64 {
-                fieldV.SetFloat(value.(float64))
-            }
-        }
-
-    }
-    return err
-}
-

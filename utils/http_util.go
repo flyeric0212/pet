@@ -24,6 +24,7 @@ import (
     "third/go-local"
     "third/http_client_cluster"
     "runtime"
+    "third/mapstructure"
 )
 
 const DEFAULT_API_TIMEOUT = 1 * time.Second
@@ -156,7 +157,8 @@ func ParseForm(form url.Values, obj interface{}) error {
     return nil
 }
 
-func ParseHttpBodyToArgs(c *gin.Context, args interface{}) error {
+// result must be pointer
+func ParseHttpBodyToArgs(c *gin.Context, result interface{}) error {
     var err error
     var args_map map[string]interface{} = make(map[string]interface{})
 
@@ -192,7 +194,7 @@ func ParseHttpBodyToArgs(c *gin.Context, args interface{}) error {
     }
 
     Logger.Info("parse body map args: %+v", args_map)
-    err = MapToStruct(args, args_map, "json")
+    err = mapstructure.Decode(args_map, result)
 
     //err := r.ParseForm()
     //if nil != err {
