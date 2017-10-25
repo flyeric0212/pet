@@ -48,7 +48,7 @@ var (
 
     oauth2Endpoint oauth2.Endpoint
     sessionStorage      = session.New(20*60, 60*60)
-    oauth2RedirectURI   = "www.petfair.cc/api/vistor_center_callback"
+    oauth2RedirectURI   = "http://www.petfair.cc/wx/vistor_center_callback"
     oauth2Scope         = "snsapi_userinfo"
 )
 
