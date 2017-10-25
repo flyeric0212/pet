@@ -133,7 +133,7 @@ func AuthPage(w http.ResponseWriter, r *http.Request) {
     http.SetCookie(w, &cookie)
 
     AuthCodeURL := mpoauth2.AuthCodeURL(wxAppId, oauth2RedirectURI, oauth2Scope, state)
-    utils.Logger.Info("AuthCodeURL:", AuthCodeURL)
+    utils.Logger.Info("AuthCodeURL: %s", AuthCodeURL)
 
     http.Redirect(w, r, AuthCodeURL, http.StatusFound)
 }
