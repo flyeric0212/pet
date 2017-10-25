@@ -14,17 +14,21 @@ import (
 // /var/www/go_workspace/bin/pet -a init_weixin_menu
 func InitWinxinMenuList() {
     // 先清空菜单
-    err :=menu.Delete(wechatClient)
+    err := menu.Delete(wechatClient)
     if nil != err {
         fmt.Printf("delete menu err: %v \n", err)
     }
     // 初始化菜单
     menu_val := new(menu.Menu)
+
     button_list := make([]menu.Button, 0)
+
     button := menu.Button{}
     button.Type = "view"
     button.Name = "观众中心"
     button.URL = "http://www.petfair.cc/api/vistor_center_auth"
+    button_list = append(button_list, button)
+
 
     menu_val.Buttons = button_list
     err = menu.Create(wechatClient, menu_val)
