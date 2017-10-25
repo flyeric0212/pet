@@ -45,7 +45,7 @@ func StartHttpServer() {
 
     // home
     router.GET("/api/vistor_center_auth", VistorCenterAuth)
-    router.GET("/wx/vistor_center_callback", VistorCenterRedirect)
+    router.GET("/api/vistor_center_callback", VistorCenterRedirect)
 
     router.Run(utils.Config.Listen)
     //router.Run(":80")
