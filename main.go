@@ -26,6 +26,10 @@ var g_logger = logging.MustGetLogger(SERVERNAME)
 
 var g_actor_type string = "boss"
 
+const (
+    ACTOR_TYPE_INIT_WEIXIN_MENU = "init_weixin_menu"
+)
+
 func init() {
     const usage = "pet [-c config_file][-a actor_type]"
     flag.StringVar(&g_conf_file, "c", "", usage)
@@ -61,5 +65,10 @@ func main() {
     InitWeixinServer()
 
     // start http server
-    StartHttpServer()
+    if ACTOR_TYPE_INIT_WEIXIN_MENU == g_actor_type {
+        InitWinxinMenuList()
+    } else {
+        StartHttpServer()
+    }
+
 }

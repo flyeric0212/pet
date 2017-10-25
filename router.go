@@ -28,7 +28,6 @@ func StartHttpServer() {
     router.GET("/wx_callback", WxCallbackHandler)
     router.POST("/wx_callback", WxCallbackHandler)
 
-
     // user
     user_router := router.Group("/api/users")
     user_router.POST("/phone_regist", UserPhoneRegist)
@@ -42,6 +41,11 @@ func StartHttpServer() {
     // article
     article_router := router.Group("/api/article")
     article_router.GET("get_article_list", GetArticleListByPage)
+
+
+    // home
+    router.GET("/api/vistor_center_auth", VistorCenterAuth)
+    router.GET("/api/vistor_center_callback", VistorCenterRedirect)
 
     router.Run(utils.Config.Listen)
     //router.Run(":80")

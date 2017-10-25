@@ -123,3 +123,13 @@ NOTICE:
 
     utils.SendResponse(c, http_code, &reply, err)
 }
+
+// 观众中心授权
+func VistorCenterAuth(c *gin.Context) {
+    AuthPage(c.Writer, c.Request)
+}
+
+// 观众中心授权回调页面
+func VistorCenterRedirect(c *gin.Context) {
+    AuthCallback(c.Writer, c.Request)
+}
