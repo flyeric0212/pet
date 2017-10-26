@@ -47,7 +47,7 @@ var (
 
     oauth2Endpoint oauth2.Endpoint
     sessionStorage      = session.New(20*60, 60*60)
-    oauth2RedirectURI   = "http://wx.petfair.cc/api/vistor_center_callback"
+    oauth2RedirectURI   = "http://mp.petfair.cc/api/vistor_center_callback"
     oauth2Scope         = "snsapi_userinfo"
 
     vistorCenterHomeURI = "http://116.62.150.250:8081/weixin/web/"
