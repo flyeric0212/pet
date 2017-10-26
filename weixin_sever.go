@@ -50,7 +50,7 @@ var (
     oauth2RedirectURI   = "http://mp.petfair.cc/api/vistor_center_callback"
     oauth2Scope         = "snsapi_userinfo"
 
-    vistorCenterHomeURI = "http://116.62.150.250:8081/weixin/web/"
+    vistorCenterHomeURI = "http://wx.petfair.cc/weixin/web/"
 )
 
 func InitWeixinServer() {
