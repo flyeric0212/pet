@@ -14,6 +14,8 @@ import (
     "sync/atomic"
     "strconv"
     "math/rand"
+    "fmt"
+    "io/ioutil"
 )
 
 func StartHttpServer() {
@@ -47,8 +49,30 @@ func StartHttpServer() {
     router.GET("/api/vistor_center_auth", VistorCenterAuth)
     router.GET("/wx/vistor_center_callback", VistorCenterRedirect)
 
+    router.GET("/MP_verify_nzlgoroX2jUMUlfT.txt", DownloadWinxinValidFile)
+
     router.Run(utils.Config.Listen)
     //router.Run(":80")
+}
+
+// 访问文件
+func DownloadWinxinValidFile(c *gin.Context) {
+    filename := "/var/config/MP_verify_nzlgoroX2jUMUlfT.txt"
+
+    _, err := os.Stat(filename)
+    if err != nil {
+        fmt.Println("ReadFile: ", err.Error())
+        return
+    }
+
+    bytes, err := ioutil.ReadFile(filename)
+    if err != nil {
+        fmt.Println("ReadFile: ", err.Error())
+        return
+    }
+    c.Writer.Write(bytes)
+
+    return
 }
 
 
