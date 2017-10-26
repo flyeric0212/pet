@@ -47,7 +47,7 @@ func StartHttpServer() {
 
     // home
     router.GET("/api/vistor_center_auth", VistorCenterAuth)
-    router.GET("/wx/vistor_center_callback", VistorCenterRedirect)
+    router.GET("/api/vistor_center_callback", VistorCenterRedirect)
 
     router.GET("/MP_verify_nzlgoroX2jUMUlfT.txt", DownloadWinxinValidFile)
 
