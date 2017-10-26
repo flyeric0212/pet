@@ -22,7 +22,6 @@ import (
     "github.com/chanxuehong/rand"
     "fmt"
     "net/url"
-    "encoding/json"
 )
 
 const (
@@ -50,6 +49,8 @@ var (
     sessionStorage      = session.New(20*60, 60*60)
     oauth2RedirectURI   = "http://www.petfair.cc/api/vistor_center_callback"
     oauth2Scope         = "snsapi_userinfo"
+
+    vistorCenterHomeURI = "http://116.62.150.250:8081/weixin/web/"
 )
 
 func InitWeixinServer() {
@@ -199,8 +200,12 @@ func AuthCallback(w http.ResponseWriter, r *http.Request) {
         utils.Logger.Error("get weixin user info err: %v", err)
         return
     }
-
-    json.NewEncoder(w).Encode(userinfo)
     utils.Logger.Info("userinfo: %+v\r\n", userinfo)
+
+    vistorCenterURL := vistorCenterHomeURI + "?openid=" + url.QueryEscape(userinfo.OpenId) +
+        "&nickname=" + url.QueryEscape(userinfo.Nickname) + "&headurl=" + url.QueryEscape(userinfo.HeadImageURL)
+
+    http.Redirect(w, r, vistorCenterURL, http.StatusFound)
+
     return
 }
