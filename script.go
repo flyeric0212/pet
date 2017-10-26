@@ -26,7 +26,7 @@ func InitWinxinMenuList() {
     button := menu.Button{}
     button.Type = "view"
     button.Name = "观众中心"
-    button.URL = "http://www.petfair.cc/api/vistor_center_auth"
+    button.URL = "http://wx.petfair.cc/api/vistor_center_auth"
     button_list = append(button_list, button)
 
 
