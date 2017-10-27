@@ -25,7 +25,7 @@ func UserPhoneRegist(args *protocol.UserPhoneRegistArgs, reply *protocol.UserPho
     }
 
     user_model := new(model.User)
-    utils.DumpStruct(user_model, &args)
+    utils.DumpStruct(user_model, args)
 
     var user_id int64
     err = user_model.Create(&user_id)
