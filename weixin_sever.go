@@ -25,20 +25,20 @@ import (
 )
 
 const (
-    //wxAppId       = "appid"
-    //wxAppSecret   = "appsecret"
-    //wxOriId       = "oriid"
+    wxToken             = "12345678shanghaipet"
+    wxEncodedAESKey     = "mzTODOLGqD2aVlw53HEOMc6qMYMG4UqXst0FxHzRr2z"
 
-    wxToken         = "12345678shanghaipet"
-    wxEncodedAESKey = "mzTODOLGqD2aVlw53HEOMc6qMYMG4UqXst0FxHzRr2z"
+    oauth2RedirectURI   = "http://mp.petfair.cc/api/vistor_center_callback"
+    oauth2Scope         = "snsapi_userinfo"
+
+    vistorCenterHomeURI = "http://wx.petfair.cc/"
 )
 
 var (
-    // 下面两个变量不一定非要作为全局变量, 根据自己的场景来选择.
-
     wxAppId string
     wxAppSecret string
     wxOriId string
+
     msgHandler core.Handler
     msgServer  *core.Server
 
@@ -47,10 +47,6 @@ var (
 
     oauth2Endpoint oauth2.Endpoint
     sessionStorage      = session.New(20*60, 60*60)
-    oauth2RedirectURI   = "http://mp.petfair.cc/api/vistor_center_callback"
-    oauth2Scope         = "snsapi_userinfo"
-
-    vistorCenterHomeURI = "http://wx.petfair.cc/"
 )
 
 func InitWeixinServer() {
