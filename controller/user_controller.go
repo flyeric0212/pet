@@ -18,6 +18,12 @@ func UserPhoneRegist(args *protocol.UserPhoneRegistArgs, reply *protocol.UserPho
 
     var err error
 
+    if args.Name == "" || args.Phone == "" || args.Openid == "" {
+        err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "参数不全")
+        utils.Logger.Error("UserPhoneRegist failed, param err: %s \n", err.Error())
+        return err
+    }
+
     user_model := new(model.User)
     utils.DumpStruct(user_model, &args)
 

@@ -10,6 +10,49 @@
 + 504: 密码错误
 
 
+# [用户名注册 - `POST /api/users/phone_regist`]
++ **创建**(`liangbo`, `2017-10-27`)
+
++ Description
+
+		电话号码注册，姓名/电话号码/微信用户id 不能为空
+
++ Request:
+
+		{
+			“name”: (required, string, 姓名),
+			"gender": (required, int，性别，0: 无性别 1: 男 2: 女)
+			"phone": (required, string, 电话号码)
+			"email": (optional, string, 邮箱地址)
+			"openid": (required, string, 微信用户标志id)
+		}
+
++ Response Succ:
+
+	     {
+		 	"status": "OK",
+		  	"data": {
+                 "user_id": (int, 用户id)
+                 "name": (string, 姓名),
+                 "nickname": (string, 用户名),
+                 "avatar": (string, 头像),
+                 "gender": (string, 性别，0: 无性别 1: 男 2: 女),
+                 "phone": (string, 电话号码),
+                 "email": (string, 邮件地址),
+                 "openid": (string, 微信公共号用户唯一标志)
+		  	}
+		   	"desc": ""
+	      }
+
++ Response Error:
+
+		{
+			"status": (required, string, 'Error', '返回状态 OK/Error'),
+			"data": (required, string, '', '返回错误code'),
+			"desc": (required, string, '', '返回描述，错误时描述')
+		}
+
+
 # [用户名注册 - `POST /api/users/nickname_regist`]
 + **创建**(`liangbo`, `2017-10-20`)
 
