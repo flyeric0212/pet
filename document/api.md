@@ -10,7 +10,7 @@
 + 504: 密码错误
 
 
-# [用户名注册 - `POST /api/users/phone_regist`]
+# [用户电话注册 - `POST /api/users/phone_regist`]
 + **创建**(`liangbo`, `2017-10-27`)
 
 + Description
