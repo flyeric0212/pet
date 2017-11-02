@@ -9,6 +9,8 @@
 + 503: 用户名不存在
 + 504: 密码错误
 
+# 微信接口 api Doc #
+---
 
 # [用户电话注册 - `POST /api/users/phone_regist`]
 + **创建**(`liangbo`, `2017-10-27`)
@@ -52,6 +54,9 @@
 			"desc": (required, string, '', '返回描述，错误时描述')
 		}
 
+
+# Pet官网 api Doc #
+---
 
 # [用户名注册 - `POST /api/users/nickname_regist`]
 + **创建**(`liangbo`, `2017-10-20`)
