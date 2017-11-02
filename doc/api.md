@@ -57,6 +57,13 @@
 			"desc": (required, string, '', '返回描述，错误时描述')
 		}
 
+# [发送验证码 - `POST /api/users/send_verify_code`]
++ **创建**(`liangbo`, `2017-11-02`)
+
+
+# [校验验证码 - `POST /api/users/check_verify_code`]
++ **创建**(`liangbo`, `2017-11-02`)
+
 
 # [ Pet官网 api Doc ] #
 ---
