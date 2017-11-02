@@ -61,8 +61,16 @@
 + **创建**(`liangbo`, `2017-11-02`)
 
 
+// 待完善
+
+
 # [校验验证码 - `POST /api/users/check_verify_code`]
 + **创建**(`liangbo`, `2017-11-02`)
+
+
+// 待完善
+
+
 
 
 # [ Pet官网 api Doc ] #
