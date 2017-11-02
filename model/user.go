@@ -14,17 +14,21 @@ import (
 // 用户信息表
 type User struct {
     UserId          int64           `gorm:"primary_key"; sql:"AUTO_INCREMENT"`
+    Phone           string          `sql:"type:varchar(64)"`    // 电话号码
     Name            string          `sql:"type:varchar(128)"`   // 姓名
-    Nickname        string          `sql:"type:varchar(128)"`   // 昵称
-    Avatar          string          `sql:"type:varchar(128)"`   // 头像
-    Password        string          `sql:"type:varbinary(128)"`
     Gender          string          `sql:"type:smallint(6)"`    // 性别，0: 无性别 1: 男 2: 女
-    Phone           string          `sql:"type:varchar(64)"`
     Email           string          `sql:"type:varchar(128)"`
+
+    RegistType      int             `sql:"type:"smallint(6)"`   // 1：微信  2：官网
+    Nickname        string          `sql:"type:varchar(128)"`   // 微信昵称
+    Avatar          string          `sql:"type:varchar(128)"`   // 微信头像
     Openid          string          `sql:"type:varchar(255)"`   // 微信公共号的用户标志
+
     CreateTime      time.Time       `sql:"type:datetime"`
     UpdateTime      time.Time       `sql:"type:datetime"`
+
     LastLogin       time.Time       `sql:"type:datetime"`
+    Password        string          `sql:"type:varbinary(128)"`
 }
 
 func (user_info *User) TableName() string {
@@ -48,10 +52,10 @@ func (user_info *User) Create(id *int64) error {
     return nil
 }
 
-// 判断昵称是否存在
-func CheckNicknameExist(nickname string) (err error, flag bool, user_info *User) {
+// 判断电话号码是否存在
+func CheckPhoneExist(phone string) (err error, flag bool, user_info *User) {
     user_info = new(User)
-    err = PET_DB.Table("pet.user").Where("nickname = ?", nickname).Limit(1).Find(user_info).Error
+    err = PET_DB.Table("pet.user").Where("phone = ?", phone).Limit(1).Find(user_info).Error
     if err == gorm.RecordNotFound {
         flag = false
         err = nil
@@ -59,7 +63,7 @@ func CheckNicknameExist(nickname string) (err error, flag bool, user_info *User)
         flag = true
     } else {
         err = utils.NewInternalError(utils.DbErrCode, err)
-        utils.Logger.Error("CheckNicknameExist failed, error: %v", err)
+        utils.Logger.Error("CheckPhoneExist failed, error: %v", err)
         return
     }
     return

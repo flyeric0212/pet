@@ -5,9 +5,8 @@
 + 200: OK
 + 500: Internal Server Error
 + 501: 参数异常
-+ 502: 用户名重复
-+ 503: 用户名不存在
-+ 504: 密码错误
++ 502: 电话号码重复
+
 
 # [ 微信接口 api Doc ] #
 ---
@@ -17,7 +16,7 @@
 
 + Description
 
-		电话号码注册，姓名/电话号码/微信用户id 不能为空
+		电话号码注册，姓名/电话号码不能为空，如果regist_type=1，openid不能为空
 
 + Request:
 
@@ -26,7 +25,11 @@
 			"gender": (required, int，性别，0: 无性别 1: 男 2: 女)
 			"phone": (required, string, 电话号码)
 			"email": (optional, string, 邮箱地址)
+			"regist_type": (required, int, 注册方式，1：微信  2：官网)
+            // 微信数据
 			"openid": (required, string, 微信用户标志id)
+            "avatar": (optional, string, 微信头像)
+            "nickname": (optional, string, 微信昵称)
 		}
 
 + Response Succ:
