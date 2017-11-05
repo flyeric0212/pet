@@ -98,7 +98,7 @@ func GetUserByOpenid(args *protocol.GetUserByOpenidArgs, reply *protocol.GetUser
 
 func GenerateVerifyCode() string {
     var code = ""
-    for i := 0; i < 4; i++ {
+    for i := 0; i < 5; i++ {
         code = code + strconv.Itoa(rand.Intn(9))
     }
     return code
@@ -158,7 +158,6 @@ func SendVerifyCode(args *protocol.SendVerifyCodeArgs, reply *protocol.SendVerif
         return err
     }
 
-    // TODO: 发送验证码
     err = utils.YpSendSms(args.Phone, code)
     if nil != err {
         utils.Logger.Error("SendVerifyCode call yunpian client failed, err: %v", err)

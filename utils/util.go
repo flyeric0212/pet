@@ -14,7 +14,6 @@ import (
     "io"
     "reflect"
     "encoding/hex"
-    "regexp"
     ypclnt "github.com/yunpian/yunpian-go-sdk/sdk"
 )
 
@@ -141,9 +140,9 @@ func DumpStruct(to interface{}, from interface{}) {
 func PhoneValid(phone string) bool {
     var ret bool
 
-    reg := `^1([38][0-9]|14[57]|5[^4])\d{8}$`
-    rgx := regexp.MustCompile(reg)
-    ret = rgx.MatchString(phone)
+    if phone != "" && len(phone) != 11 {
+        ret = true
+    }
 
     return ret
 }
