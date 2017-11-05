@@ -6,6 +6,7 @@
 + 500: Internal Server Error
 + 501: 参数异常
 + 502: 电话号码重复
++ 503: 验证码请求频率太快
 
 
 # [ 微信接口 api Doc ] #
@@ -97,10 +98,35 @@
 
 
 # [发送验证码 - `POST /api/users/send_verify_code`]
-+ **创建**(`liangbo`, `2017-11-02`)
++ **创建**(`liangbo`, `2017-11-05`)
 
++ Description
 
-// 待完善
+		发送验证码
+
++ Request:
+
+		{
+			"phone": (string, 电话号码)
+		}
+
++ Response Succ:
+
+	     {
+		 	"status": "OK",
+		  	"data": {
+
+		  	}
+		   	"desc": ""
+	      }
+
++ Response Error:
+
+		{
+			"status": (required, string, 'Error', '返回状态 OK/Error'),
+			"data": (required, string, '', '返回错误code'),
+			"desc": (required, string, '', '返回描述，错误时描述')
+		}
 
 
 # [校验验证码 - `POST /api/users/check_verify_code`]

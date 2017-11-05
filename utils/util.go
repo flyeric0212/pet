@@ -14,6 +14,8 @@ import (
     "io"
     "reflect"
     "encoding/hex"
+    "regexp"
+    ypclnt "github.com/yunpian/yunpian-go-sdk/sdk"
 )
 
 var (
@@ -27,6 +29,10 @@ var (
     AESBlock       cipher.Block
     ErrAESTextSize = errors.New("ciphertext is not a multiple of the block size")
     ErrAESPadding  = errors.New("cipher padding size err")
+
+    // 云片sms
+    ypApiKey            string
+    ypClient            ypclnt.YunpianClient
 )
 
 var ses_res_chan chan struct{} = make(chan struct{}, 10) // aws ses send limit is 14 per second
@@ -47,6 +53,12 @@ func init() {
     for i := 0; i < 10; i++ {
         ses_res_chan <- struct{}{}
     }
+}
+
+func InitYpClient() {
+    // 云片client
+    ypApiKey            = Config.External["ypApiKey"]
+    ypClient            = ypclnt.New(ypApiKey)
 }
 
 // aes 加密
@@ -123,4 +135,29 @@ func DumpStruct(to interface{}, from interface{}) {
             fdi_to_val.Set(fdi_from_val)
         }
     }
+}
+
+// 校验电话号码
+func PhoneValid(phone string) bool {
+    var ret bool
+
+    reg := `^1([38][0-9]|14[57]|5[^4])\d{8}$`
+    rgx := regexp.MustCompile(reg)
+    ret = rgx.MatchString(phone)
+
+    return ret
+}
+
+// 云片发送验证码
+func YpSendSms(phone, code string) error {
+    param := ypclnt.NewParam(2)
+    param[ypclnt.MOBILE] = phone
+    param[ypclnt.TEXT] = "您的验证码是 " + code + "，15分钟内有效"
+    result := ypClient.Sms().SingleSend(param)
+
+    if result != nil && result.Code != 0 {
+        Logger.Error("Yunpian send sms failed, result: %+v", result)
+    }
+
+    return nil
 }

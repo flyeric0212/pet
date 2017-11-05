@@ -9,10 +9,18 @@ import (
     "pet/protocol"
     "pet/model"
     "pet/utils"
+    "strconv"
+    "math/rand"
+    "third/go-local"
+    "fmt"
+    "time"
 )
 
 // 用户电话注册
 func UserPhoneRegist(args *protocol.UserPhoneRegistArgs, reply *protocol.UserPhoneRegistReply) error {
+    local.TempTraceInfoArgs(args)
+    defer local.Clear()
+
     utils.Logger.Info("[cmd:user_phone_regist] args: %+v", args)
 
     var err error
@@ -20,6 +28,13 @@ func UserPhoneRegist(args *protocol.UserPhoneRegistArgs, reply *protocol.UserPho
     // 参数校验
     if args.Name == "" || args.Phone == "" || args.RegistType == 0 {
         err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "参数不全")
+        utils.Logger.Error("UserPhoneRegist failed, param err: %s \n", err.Error())
+        return err
+    }
+
+    // 电话号码校验
+    if !utils.PhoneValid(args.Phone) {
+        err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "电话号码错误")
         utils.Logger.Error("UserPhoneRegist failed, param err: %s \n", err.Error())
         return err
     }
@@ -61,6 +76,9 @@ func UserPhoneRegist(args *protocol.UserPhoneRegistArgs, reply *protocol.UserPho
 
 // 获取用户信息 by openid
 func GetUserByOpenid(args *protocol.GetUserByOpenidArgs, reply *protocol.GetUserByOpenidReply) error {
+    local.TempTraceInfoArgs(args)
+    defer local.Clear()
+
     utils.Logger.Info("[cmd:get_user_by_openid] args: %+v", args)
 
     if args.Openid == "" {
@@ -78,94 +96,87 @@ func GetUserByOpenid(args *protocol.GetUserByOpenidArgs, reply *protocol.GetUser
     return nil
 }
 
-// 发送验证码
-func SendVerifyCode() {
+func GenerateVerifyCode() string {
+    var code = ""
+    for i := 0; i < 5; i++ {
+        code = code + strconv.Itoa(rand.Intn(9))
+    }
+    return code
+}
 
+// 发送验证码
+func SendVerifyCode(args *protocol.SendVerifyCodeArgs, reply *protocol.SendVerifyCodeReply) error {
+    local.TempTraceInfoArgs(args)
+    defer local.Clear()
+
+    utils.Logger.Info("[cmd:send_verify_code] args: %+v", args)
+
+    var err error
+
+    if !utils.PhoneValid(args.Phone) {
+        err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "电话号码错误")
+        utils.Logger.Error("SendVerifyCode failed, param err: %s \n", err.Error())
+        return err
+    }
+
+    // redis 判断请求频率（5秒）
+    res, err := g_cache.Get(args.Phone)
+    if res != nil {
+        err = utils.NewInternalErrorByStr(utils.HighFrequencyErrCode, "验证码请求频率太快")
+        utils.Logger.Error("SendVerifyCode HighFrequencyErrCode: %v", err)
+        return err
+    }
+
+    // redis 判断每天请求次数
+    var times int
+    res, err = g_cache.Get(fmt.Sprintf("%s:%s", args.Phone, time.Now().Format("2006-01-02")))
+    if nil != err {
+        times = 0
+    } else {
+        times, _ = strconv.Atoi(string(res))
+    }
+    if times > 10 {
+        err = utils.NewInternalErrorByStr(utils.DayMaxTimeErrCode, "验证码超过每天次数")
+        utils.Logger.Error("SendVerifyCode DayMaxTimeErrCode: %v", err)
+        return err
+    }
+
+    // redis 设置验证码，过期时间15分钟
+    code := GenerateVerifyCode()
+    err = g_cache.Set(code + ":" + args.Phone, 0, 15*60)    // 10分钟
+    if nil != err {
+        utils.Logger.Error("set code cache err")
+        err = utils.NewInternalError(utils.CacheErrCode, err)
+        return err
+    }
+
+    // redis 设置
+    err = g_cache.Set(args.Phone, code, 5)
+    if nil != err {
+        utils.Logger.Error("set phone expire key err")
+        err = utils.NewInternalError(utils.CacheErrCode, err)
+        return err
+    }
+
+    // TODO: 发送验证码
+    //err = utils.YpSendSms(args.Phone, code)
+    //if nil != err {
+    //    utils.Logger.Error("SendVerifyCode call yunpian client failed, err: %v", err)
+    //    return err
+    //}
+
+    _, err = g_cache.Incr(fmt.Sprintf("%s:%s", args.Phone, time.Now().Format("2006-01-02")))
+    if nil != err {
+        utils.Logger.Error("set code max time err")
+        err = utils.NewInternalError(utils.CacheErrCode, err)
+        return err
+    }
+    g_cache.Expire(fmt.Sprintf("%s:%s", args.Phone, time.Now().Format("2006-01-02")), 24*3600)
+
+    return nil
 }
 
 // 验证验证码
 func CheckVerifyCode() {
 
 }
-
-// 用户用户名注册
-//func UserNicknameRegist(args *protocol.UserNicknameRegistArgs, reply *protocol.UserNicknameRegistReply) error {
-//    utils.Logger.Info("[cmd:user_nickname_regist] args: %+v", args)
-//
-//    var err error
-//
-//    // 判断参数是否异常
-//    if args.Nickname == "" || args.Password == "" {
-//        err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "用户名或密码为空")
-//        utils.Logger.Error("UserNicknameRegist failed, param err: %s \n", err.Error())
-//        return err
-//    }
-//
-//    // 判断昵称是否存在
-//    err, ok, _ := model.CheckNicknameExist(args.Nickname)
-//    if nil != err {
-//        return err
-//    }
-//    if ok {
-//        err = utils.NewInternalErrorByStr(utils.NicknameRepeatErrCode, "用户名重复")
-//        utils.Logger.Error("UserNicknameRegist failed, err: %s \n", err.Error())
-//        return err
-//    }
-//
-//    // 复制用户数据
-//    user_model := new(model.User)
-//    user_model.Nickname = args.Nickname
-//    user_model.Password = utils.AesEncrypt(args.Password)
-//    var user_id int64
-//    err = user_model.Create(&user_id)
-//    if nil != err {
-//        return err
-//    }
-//    // 复制数据
-//    model.CopyUserData(user_model, &reply.User)
-//
-//    return nil
-//}
-//
-//func UserNicknameLogin(args *protocol.UserNicknameLoginArgs, reply *protocol.UserNicknameLoginReply) error {
-//    utils.Logger.Info("[cmd:user_nickname_login] args: %+v", args)
-//
-//    var err error
-//
-//    // 判断参数是否异常
-//    if args.Nickname == "" || args.Password == "" {
-//        err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "用户名或密码为空")
-//        utils.Logger.Error("UserNicknameLogin failed, param err: %s \n", err.Error())
-//        return err
-//    }
-//
-//    // 判断昵称是否存在
-//    err, ok, user_info := model.CheckNicknameExist(args.Nickname)
-//    if nil != err {
-//        return err
-//    }
-//    if !ok {
-//        err = utils.NewInternalErrorByStr(utils.NicknameNotFoundErrCode, "用户名不存在")
-//        utils.Logger.Error("UserNicknameLogin failed, err: %s \n", err.Error())
-//        return err
-//    }
-//
-//    // 判断密码
-//    if args.Password != utils.AesDecrypt(user_info.Password) {
-//        err = utils.NewInternalErrorByStr(utils.PasswordWrongErrCode, "密码错误")
-//        utils.Logger.Error("UserNicknameLogin failed, err: %s \n", err.Error())
-//        return err
-//    }
-//
-//    user_info.LastLogin = time.Now()
-//    err = model.PET_DB.Save(&user_info).Error
-//    if nil != err {
-//        err = utils.NewInternalError(utils.DbErrCode, err)
-//        utils.Logger.Error("update user login time error: %v", err)
-//        return err
-//    }
-//    // 复制数据
-//    model.CopyUserData(user_info, &reply.User)
-//
-//    return nil
-//}

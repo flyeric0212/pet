@@ -45,7 +45,7 @@ var (
     accessTokenServer core.AccessTokenServer
     wechatClient      *core.Client
 
-    oauth2Endpoint oauth2.Endpoint
+    oauth2Endpoint      oauth2.Endpoint
     sessionStorage      = session.New(20*60, 60*60)
 )
 

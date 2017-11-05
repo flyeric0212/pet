@@ -34,6 +34,7 @@ func StartHttpServer() {
     user_router := router.Group("/api/users")
     user_router.POST("/phone_regist", UserPhoneRegist)
     user_router.GET("/get_by_openid", GetUserByOpenid)
+    user_router.POST("/send_verify_code", SendVerifyCode)
 
     // banner
     banner_router := router.Group("/api/banner")
@@ -44,14 +45,13 @@ func StartHttpServer() {
     article_router.GET("get_article_list", GetArticleListByPage)
 
 
-    // home
+    // weixin homepage
     router.GET("/api/vistor_center_auth", VistorCenterAuth)
     router.GET("/api/vistor_center_callback", VistorCenterRedirect)
 
     router.GET("/MP_verify_nzlgoroX2jUMUlfT.txt", DownloadWinxinValidFile)
 
     router.Run(utils.Config.Listen)
-    //router.Run(":80")
 }
 
 // 访问文件

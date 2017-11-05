@@ -28,6 +28,8 @@ const (
     //直接抛给用户的错误码
     ParameterErrCode      	ErrCode = 501 	// 参数异常
     PhoneRepeatErrCode      ErrCode = 502   // 电话号码重复
+    HighFrequencyErrCode    ErrCode = 503   // 验证码请求频率太快
+    DayMaxTimeErrCode       ErrCode = 504   // 验证码每天次数
 
     //NicknameRepeatErrCode   ErrCode = 502   // 昵称重复
     //NicknameNotFoundErrCode ErrCode = 503   // 昵称不存在

@@ -13,6 +13,7 @@ import (
     "pet/utils"
     "pet/model"
     _ "third/go-sql-driver/mysql"
+    "pet/controller"
 )
 
 const (
@@ -24,7 +25,7 @@ var g_config utils.Configure
 
 var g_logger = logging.MustGetLogger(SERVERNAME)
 
-var g_actor_type string = "boss"
+var g_actor_type string
 
 const (
     ACTOR_TYPE_INIT_WEIXIN_MENU = "init_weixin_menu"
@@ -61,8 +62,17 @@ func main() {
         return
     }
 
+    // init redis
+    RedisSetting, _ := g_config.RedisSetting["RedisSetting"]
+    if err = controller.InitCachePool(&RedisSetting); nil != err {
+        fmt.Printf("init redis cache failed, err: %v", err)
+        return
+    }
+
     // init weixin server
     InitWeixinServer()
+    // init yunpian sms client
+    utils.InitYpClient()
 
     // start http server
     if ACTOR_TYPE_INIT_WEIXIN_MENU == g_actor_type {
@@ -70,5 +80,4 @@ func main() {
     } else {
         StartHttpServer()
     }
-
 }
