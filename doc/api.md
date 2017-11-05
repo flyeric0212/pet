@@ -57,6 +57,45 @@
 			"desc": (required, string, '', '返回描述，错误时描述')
 		}
 
+# [通过微信用户标志获取用户信息 - `GET /api/users/get_by_openid`]
++ **创建**(`liangbo`, `2017-11-05`)
+
++ Description
+
+		通过微信用户标志获取用户信息
+
++ Request:
+
+		{
+			"openid": (string, 微信用户标志id)
+		}
+
++ Response Succ:
+
+	     {
+		 	"status": "OK",
+		  	"data": {
+                 "user_id": (int, 用户id)
+                 "name": (string, 姓名),
+                 "nickname": (string, 用户名),
+                 "avatar": (string, 头像),
+                 "gender": (string, 性别，0: 无性别 1: 男 2: 女),
+                 "phone": (string, 电话号码),
+                 "email": (string, 邮件地址),
+                 "openid": (string, 微信公共号用户唯一标志)
+		  	}
+		   	"desc": ""
+	      }
+
++ Response Error:
+
+		{
+			"status": (required, string, 'Error', '返回状态 OK/Error'),
+			"data": (required, string, '', '返回错误code'),
+			"desc": (required, string, '', '返回描述，错误时描述')
+		}
+
+
 # [发送验证码 - `POST /api/users/send_verify_code`]
 + **创建**(`liangbo`, `2017-11-02`)
 
