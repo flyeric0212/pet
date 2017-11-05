@@ -152,7 +152,7 @@ func PhoneValid(phone string) bool {
 func YpSendSms(phone, code string) error {
     param := ypclnt.NewParam(2)
     param[ypclnt.MOBILE] = phone
-    param[ypclnt.TEXT] = "验证码:" + code
+    param[ypclnt.TEXT] = code
     result := ypClient.Sms().SingleSend(param)
 
     if result != nil && result.Code != 0 {
