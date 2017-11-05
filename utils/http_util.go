@@ -195,30 +195,6 @@ func ParseHttpBodyToArgs(c *gin.Context, result interface{}) error {
 
     Logger.Info("parse body map args: %+v", args_map)
     err = mapstructure.Decode(args_map, result)
-
-    //err := r.ParseForm()
-    //if nil != err {
-    //    err = NewInternalError(DecodeErrCode, err)
-    //}
-    //err = ParseForm(r.Form, args)
-    //if nil != err {
-    //    err = NewInternalError(DecodeErrCode, err)
-    //}
-    //
-    //var body []byte
-    //body, err = ioutil.ReadAll(r.Body)
-    //if err != nil {
-    //    Logger.Error("ParseHttpBodyToArgs failed, read body err : %v", err)
-    //    return err
-    //}
-    //defer r.Body.Close()
-    //if body != nil && len(body) > 0 {
-    //    if err := json.Unmarshal(body, args); err != nil {
-    //        Logger.Error("ParseHttpBodyToArgs failed, Unmarshal body err: %s, %v", string(body), err)
-    //        return err
-    //    }
-    //}
-
     return err
 }
 

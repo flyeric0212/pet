@@ -32,7 +32,7 @@ type UserPhoneRegistArgs struct {
     Phone           string              `json:"phone"`
     Email           string              `json:"email"`
 
-    RegistType      int                 `json:"regist_type"`    // 1: 微信   2：官网
+    RegistType      int                 `json:"regist_type" mapstructure:"regist_type"`    // 1: 微信   2：官网
     Nickname        string              `json:"nickname"`       // 微信昵称
     Avatar          string              `json:"avatar"`         // 微信头像
     Openid          string              `json:"openid"`         // 微信用户凭证
@@ -66,7 +66,7 @@ type CheckVerifyCodeArgs struct {
     local.TraceParam
 
     Phone           string              `json:"phone"`
-    VerifyCode      string              `json:"verify_code"`
+    VerifyCode      string              `json:"verify_code" mapstructure:"verify_code"`
 }
 type CheckVerifyCodeReply struct {
     State           int                 `json:"state"`
