@@ -77,6 +77,27 @@ NOTICE:
     utils.SendResponse(c, http_code, &reply, err)
 }
 
+// 校验验证码
+func CheckVerifyCode(c *gin.Context) {
+    var http_code int = http.StatusOK
+    handle_start_time := time.Now()
+
+    var args protocol.CheckVerifyCodeArgs
+    var reply protocol.CheckVerifyCodeReply
+
+    err := utils.ParseHttpBodyToArgs(c, &args)
+    if nil != err {
+        goto NOTICE
+    }
+    err = controller.CheckVerifyCode(&args, &reply)
+
+NOTICE:
+    g_logger.Notice("[cmd:check_verify_code][Cost:%dus][Err:%v]",
+        time.Now().Sub(handle_start_time).Nanoseconds()/1000, err)
+
+    utils.SendResponse(c, http_code, &reply, err)
+}
+
 // 分页获取banner列表
 func GetBannerListByPage(c *gin.Context) {
     var http_code int = http.StatusOK

@@ -35,6 +35,7 @@ func StartHttpServer() {
     user_router.POST("/phone_regist", UserPhoneRegist)
     user_router.GET("/get_by_openid", GetUserByOpenid)
     user_router.POST("/send_verify_code", SendVerifyCode)
+    user_router.POST("/check_verify_code", CheckVerifyCode)
 
     // banner
     banner_router := router.Group("/api/banner")

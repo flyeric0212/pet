@@ -66,6 +66,20 @@ func (user_info *User) GetUserByOpenid(openid string) error {
     return nil
 }
 
+// get user by phone
+func (user_info *User) GetUserByPhone(phone string) error {
+    err := PET_DB.Table(user_info.TableName()).Where("phone = ?", phone).Limit(1).Find(user_info).Error
+    if gorm.RecordNotFound == err {
+        utils.Logger.Warning("user not found by phone, phone: %s", phone)
+        err = nil
+    } else if nil != err {
+        err = utils.NewInternalError(utils.DbErrCode, err)
+        utils.Logger.Error("get user by phone failed, phone: %s, error: %v", phone, err)
+        return err
+    }
+    return nil
+}
+
 // 判断电话号码是否存在
 func CheckPhoneExist(phone string) (err error, flag bool, user_info *User) {
     user_info = new(User)

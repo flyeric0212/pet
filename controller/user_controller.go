@@ -113,7 +113,7 @@ func SendVerifyCode(args *protocol.SendVerifyCodeArgs, reply *protocol.SendVerif
 
     var err error
 
-    if !utils.PhoneValid(args.Phone) {
+    if args.Phone == "" || !utils.PhoneValid(args.Phone) {
         err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "电话号码错误")
         utils.Logger.Error("SendVerifyCode failed, param err: %s \n", err.Error())
         return err
@@ -159,11 +159,11 @@ func SendVerifyCode(args *protocol.SendVerifyCodeArgs, reply *protocol.SendVerif
     }
 
     // TODO: 发送验证码
-    //err = utils.YpSendSms(args.Phone, code)
-    //if nil != err {
-    //    utils.Logger.Error("SendVerifyCode call yunpian client failed, err: %v", err)
-    //    return err
-    //}
+    err = utils.YpSendSms(args.Phone, code)
+    if nil != err {
+        utils.Logger.Error("SendVerifyCode call yunpian client failed, err: %v", err)
+        return err
+    }
 
     _, err = g_cache.Incr(fmt.Sprintf("%s:%s", args.Phone, time.Now().Format("2006-01-02")))
     if nil != err {
@@ -176,7 +176,56 @@ func SendVerifyCode(args *protocol.SendVerifyCodeArgs, reply *protocol.SendVerif
     return nil
 }
 
-// 验证验证码
-func CheckVerifyCode() {
+/**
+ * 验证验证码
+ *
+ * state, 0: 可注册 ·1：微信已注册  2: 官网已注册
+ */
+func CheckVerifyCode(args *protocol.CheckVerifyCodeArgs, reply *protocol.CheckVerifyCodeReply) error {
+    local.TempTraceInfoArgs(args)
+    defer local.Clear()
 
+    utils.Logger.Info("[cmd:check_verify_code] args: %+v", args)
+
+    var err error
+    if args.Phone == "" || !utils.PhoneValid(args.Phone) {
+        err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "电话号码错误")
+        utils.Logger.Error("CheckVerifyCode failed, param err: %s \n", err.Error())
+        return err
+    }
+
+    if args.VerifyCode == "" {
+        err = utils.NewInternalErrorByStr(utils.ParameterErrCode, "验证码不能为空")
+        utils.Logger.Error("CheckVerifyCode failed, param err: %s \n", err.Error())
+        return err
+    }
+
+    res, err := g_cache.Get(args.VerifyCode + ":" + args.Phone)
+    if nil != err {
+        utils.Logger.Error("get verify code cache err: %v", err)
+        err = utils.NewInternalError(utils.CacheErrCode, err)
+        return err
+    }
+
+    if res == nil {
+        err = utils.NewInternalErrorByStr(utils.VerifyCodeWrong, "验证码错误")
+        return err
+    }
+
+    user_model := new(model.User)
+    err = user_model.GetUserByPhone(args.Phone)
+    if nil != err {
+        return err
+    }
+    if user_model.UserId == 0 {
+        reply.State = 0
+    } else {
+        if user_model.RegistType == 1 {
+            reply.State = 1
+        } else if user_model.RegistType == 2 {
+            reply.State = 2
+        }
+        model.CopyUserData(user_model, &reply.User)
+    }
+    return nil
 }

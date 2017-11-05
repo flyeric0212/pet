@@ -55,8 +55,20 @@ type GetUserByOpenidReply struct {
 type SendVerifyCodeArgs struct {
     local.TraceParam
 
-    Phone           string              `json:""`
+    Phone           string              `json:"phone"`
 }
 type SendVerifyCodeReply struct {
 
+}
+
+// 检查验证码
+type CheckVerifyCodeArgs struct {
+    local.TraceParam
+
+    Phone           string              `json:"phone"`
+    VerifyCode      string              `json:"verify_code"`
+}
+type CheckVerifyCodeReply struct {
+    State           int                 `json:"state"`
+    User            UserInfoJson        `json:"user_info"`
 }
