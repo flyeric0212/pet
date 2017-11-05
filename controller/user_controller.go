@@ -98,7 +98,7 @@ func GetUserByOpenid(args *protocol.GetUserByOpenidArgs, reply *protocol.GetUser
 
 func GenerateVerifyCode() string {
     var code = ""
-    for i := 0; i < 5; i++ {
+    for i := 0; i < 4; i++ {
         code = code + strconv.Itoa(rand.Intn(9))
     }
     return code
