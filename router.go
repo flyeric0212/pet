@@ -33,7 +33,7 @@ func StartHttpServer() {
     // user
     user_router := router.Group("/api/users")
     user_router.POST("/phone_regist", UserPhoneRegist)
-    user_router.POST("/get_by_openid", GetUserByOpenid)
+    user_router.GET("/get_by_openid", GetUserByOpenid)
 
     // banner
     banner_router := router.Group("/api/banner")
