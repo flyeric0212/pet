@@ -59,6 +59,25 @@ func UserPhoneRegist(args *protocol.UserPhoneRegistArgs, reply *protocol.UserPho
     return nil
 }
 
+// 获取用户信息 by openid
+func GetUserByOpenid(args *protocol.GetUserByOpenidArgs, reply *protocol.GetUserByOpenidReply) error {
+    utils.Logger.Info("[cmd:get_user_by_openid] args: %+v", args)
+
+    if args.Openid == "" {
+        return nil
+    }
+
+    user_model := new(model.User)
+    err := user_model.GetUserByOpenid(args.Openid)
+    if nil != err {
+        return err
+    }
+    // 复制数据，输出到api
+    model.CopyUserData(user_model, &reply.User)
+
+    return nil
+}
+
 // 发送验证码
 func SendVerifyCode() {
 

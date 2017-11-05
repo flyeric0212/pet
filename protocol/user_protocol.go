@@ -40,3 +40,13 @@ type UserPhoneRegistArgs struct {
 type UserPhoneRegistReply struct {
     User          UserInfoJson      `json:"user_info"`
 }
+
+// openid获取用户信息
+type GetUserByOpenidArgs struct {
+    local.TraceParam
+
+    Openid          string          `json:"openid"`
+}
+type GetUserByOpenidReply struct {
+    User          UserInfoJson      `json:"user_info"`
+}

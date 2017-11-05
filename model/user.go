@@ -52,6 +52,20 @@ func (user_info *User) Create(id *int64) error {
     return nil
 }
 
+// 通过微信用户标志拉取用户标志
+func (user_info *User) GetUserByOpenid(openid string) error {
+    err := PET_DB.Table(user_info.TableName()).Where("openid = ?", openid).Limit(1).Find(user_info).Error
+    if gorm.RecordNotFound == err {
+        utils.Logger.Warning("user not found by openid, openid: %s", openid)
+        err = nil
+    } else if nil != err {
+        err = utils.NewInternalError(utils.DbErrCode, err)
+        utils.Logger.Error("get user by openid failed, openid: %s, error: %v", openid, err)
+        return err
+    }
+    return nil
+}
+
 // 判断电话号码是否存在
 func CheckPhoneExist(phone string) (err error, flag bool, user_info *User) {
     user_info = new(User)
