@@ -202,7 +202,7 @@ func CheckVerifyCode(args *protocol.CheckVerifyCodeArgs, reply *protocol.CheckVe
     res, err := g_cache.Get(args.VerifyCode + ":" + args.Phone)
     if nil != err {
         utils.Logger.Error("get verify code cache err: %v", err)
-        err = utils.NewInternalError(utils.CacheErrCode, err)
+        err = utils.NewInternalErrorByStr(utils.VerifyCodeWrong, "验证码错误")
         return err
     }
 
