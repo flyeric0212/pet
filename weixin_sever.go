@@ -196,12 +196,11 @@ func AuthCallback(w http.ResponseWriter, r *http.Request) {
         utils.Logger.Error("get weixin user info err: %v", err)
         return
     }
-
     vistorCenterURL := vistorCenterHomeURI + "?openid=" + url.QueryEscape(userinfo.OpenId) +
         "&nickname=" + url.QueryEscape(userinfo.Nickname) + "&headurl=" + url.QueryEscape(userinfo.HeadImageURL)
 
 	utils.Logger.Info("userinfo: %+v, redirect_url: %s \r\n", userinfo, vistorCenterURL)
-    http.Redirect(w, r, vistorCenterURL, http.StatusFound)
 
+    http.Redirect(w, r, vistorCenterURL, http.StatusFound)
     return
 }
