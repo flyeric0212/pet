@@ -149,15 +149,19 @@ func PhoneValid(phone string) bool {
 }
 
 // 云片发送验证码
-func YpSendSms(phone, code string) error {
+func YpSendSms(phone, code string) int {
     param := ypclnt.NewParam(2)
     param[ypclnt.MOBILE] = phone
     param[ypclnt.TEXT] = "您的验证码是" + code +"。如非本人操作，请忽略本短信"
     result := ypClient.Sms().SingleSend(param)
 
-    if result != nil && result.Code != 0 {
-        Logger.Error("Yunpian send sms failed, result: %+v", result)
+    if result == nil || result.Code != 0 {
+    	if result != nil {
+			Logger.Error("Yunpian send sms failed, result: %+v", result)
+		} else {
+			Logger.Error("Yunpian send sms failed, call ypClient error")
+		}
+        return 1
     }
-
-    return nil
+    return 0
 }

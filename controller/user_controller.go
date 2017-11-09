@@ -136,14 +136,14 @@ func SendVerifyCode(args *protocol.SendVerifyCodeArgs, reply *protocol.SendVerif
         times, _ = strconv.Atoi(string(res))
     }
     if times > 10 {
-        //err = utils.NewInternalErrorByStr(utils.DayMaxTimeErrCode, "验证码超过每天次数")
-        //utils.Logger.Error("SendVerifyCode DayMaxTimeErrCode: %v", err)
-        //return err
+        err = utils.NewInternalErrorByStr(utils.DayMaxTimeErrCode, "验证码超过每天次数")
+        utils.Logger.Error("SendVerifyCode DayMaxTimeErrCode: %v", err)
+        return err
     }
 
     // redis 设置验证码，过期时间15分钟
     code := GenerateVerifyCode()
-    err = g_cache.Set(code + ":" + args.Phone, 0, 15*60)    // 10分钟
+    err = g_cache.Set(code + ":" + args.Phone, 0, 20*60)    // 20分钟失效
     if nil != err {
         utils.Logger.Error("set code cache err")
         err = utils.NewInternalError(utils.CacheErrCode, err)
@@ -158,9 +158,10 @@ func SendVerifyCode(args *protocol.SendVerifyCodeArgs, reply *protocol.SendVerif
         return err
     }
 
-    err = utils.YpSendSms(args.Phone, code)
-    if nil != err {
-        utils.Logger.Error("SendVerifyCode call yunpian client failed, err: %v", err)
+    result_code := utils.YpSendSms(args.Phone, code)
+    if 0 != result_code {
+		err = utils.NewInternalErrorByStr(utils.VerifyCodeSendErrCode, "验证码发送失败")
+        utils.Logger.Error("sms client send failed, err: %v", err)
         return err
     }
 

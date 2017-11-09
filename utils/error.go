@@ -31,6 +31,7 @@ const (
     HighFrequencyErrCode    ErrCode = 503   // 验证码请求频率太快
     DayMaxTimeErrCode       ErrCode = 504   // 验证码每天次数
     VerifyCodeWrong         ErrCode = 505   // 验证码错误
+	VerifyCodeSendErrCode	ErrCode = 506	// 验证码发送失败
 
     MaxUserError 			ErrCode = 9999
 )
