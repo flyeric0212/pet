@@ -136,9 +136,9 @@ func SendVerifyCode(args *protocol.SendVerifyCodeArgs, reply *protocol.SendVerif
         times, _ = strconv.Atoi(string(res))
     }
     if times > 10 {
-        err = utils.NewInternalErrorByStr(utils.DayMaxTimeErrCode, "验证码超过每天次数")
-        utils.Logger.Error("SendVerifyCode DayMaxTimeErrCode: %v", err)
-        return err
+        //err = utils.NewInternalErrorByStr(utils.DayMaxTimeErrCode, "验证码超过每天次数")
+        //utils.Logger.Error("SendVerifyCode DayMaxTimeErrCode: %v", err)
+        //return err
     }
 
     // redis 设置验证码，过期时间15分钟
